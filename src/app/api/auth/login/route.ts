@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { signUserJwt } from '@/lib/auth';
 
 export async function POST(request: Request) {
@@ -26,6 +26,7 @@ export async function POST(request: Request) {
     });
     return res;
   } catch (e) {
+    console.error('login failed', e);
     return NextResponse.json({ error: 'login failed' }, { status: 500 });
   }
 }
