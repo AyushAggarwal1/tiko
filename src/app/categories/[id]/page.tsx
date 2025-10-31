@@ -19,6 +19,8 @@ export default function CategoryDetailPage() {
 
   const [category, setCategory] = useState<Category | null>(null);
   const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState<'ALL' | Ticket['status']>('ALL');
 
   async function load() {
     const res = await fetch(`/api/categories/${id}`);
@@ -29,41 +31,66 @@ export default function CategoryDetailPage() {
 
   useEffect(() => { if (id) load(); }, [id]);
 
+  function StatusBadge({ status }: { status: Ticket['status'] }) {
+    const cls = status === 'DONE' ? 'bg-success-100 text-success-700' : status === 'IN_PROGRESS' ? 'bg-warning-100 text-warning-700' : 'bg-secondary-100 text-secondary-700';
+    const label = status === 'DONE' ? 'Done' : status === 'IN_PROGRESS' ? 'In-progress' : 'To-do';
+    return <span className={`inline-block rounded px-2 py-0.5 text-xs ${cls}`}>{label}</span>;
+  }
+
+  const filtered = tickets.filter(t => {
+    const matchesQuery = query.trim().length === 0 || t.title.toLowerCase().includes(query.toLowerCase()) || (t.description || "").toLowerCase().includes(query.toLowerCase());
+    const matchesStatus = status === 'ALL' || t.status === status;
+    return matchesQuery && matchesStatus;
+  });
+
   return (
-    <main className="p-6 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <button onClick={() => router.push('/dashboard')} className="text-sm text-primary-600 hover:underline">← Back</button>
-        <h1 className="text-2xl font-semibold">Category</h1>
-        <span />
-      </div>
+    <main className="mx-auto max-w-7xl p-4 md:p-6">
+      {/* Page header removed; using global header */}
 
       {!category ? (
         <p className="text-secondary-600">Loading...</p>
       ) : (
         <>
-          <div className="bg-white rounded-xl p-4 shadow mb-4">
+          <div className="mb-4 rounded-xl bg-white p-4 shadow">
             <h2 className="text-lg font-semibold">{category.name} <span className="text-secondary-500 text-sm">({category.ticketsCount ?? tickets.length} tickets)</span></h2>
-            {category.description && (
-              <p className="mt-2 text-secondary-700">{category.description}</p>
-            )}
+            {category.description && (<p className="mt-2 text-secondary-700">{category.description}</p>)}
           </div>
 
-          <div className="bg-white rounded-xl p-4 shadow">
-            <h3 className="font-semibold mb-2">Tickets in this category</h3>
-            <ul className="divide-y">
-              {tickets.map(t => (
-                <li key={t.id} className="py-2 flex items-center justify-between">
-                  <div>
-                    <a className="text-primary-600 hover:underline" href={`/tickets/${t.id}`}>{t.title}</a>
-                    {t.description && <p className="text-sm text-secondary-600">{t.description}</p>}
-                  </div>
-                  <span className="text-xs border rounded px-2 py-1">{t.status}</span>
-                </li>
-              ))}
-              {tickets.length === 0 && (
-                <li className="py-2 text-sm text-secondary-600">No tickets.</li>
-              )}
-            </ul>
+          <div className="rounded-xl bg-white p-4 shadow">
+            <h3 className="mb-2 font-semibold">Tickets in this category</h3>
+            <div className="mb-3 grid grid-cols-1 gap-2 md:grid-cols-3">
+              <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search title or description" className="rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200" />
+              <select value={status} onChange={e=>setStatus(e.target.value as any)} className="rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200">
+                <option value="ALL">All status</option>
+                <option value="TODO">To-do</option>
+                <option value="IN_PROGRESS">In-progress</option>
+                <option value="DONE">Done</option>
+              </select>
+              <div className="hidden md:block" />
+            </div>
+            <div className="overflow-x-auto rounded-xl border">
+              <table className="min-w-full text-sm">
+                <thead>
+                  <tr className="bg-secondary-50 text-left text-secondary-600">
+                    <th className="p-2 font-medium">Title</th>
+                    <th className="p-2 font-medium">Description</th>
+                    <th className="p-2 font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map(t => (
+                    <tr key={t.id} className="border-t hover:bg-secondary-50/60">
+                      <td className="p-2 font-medium whitespace-nowrap"><a className="text-primary-600 hover:underline" href={`/tickets/${t.id}`}>{t.title}</a></td>
+                      <td className="p-2 max-w-[24rem] truncate">{t.description || ''}</td>
+                      <td className="p-2"><StatusBadge status={t.status} /></td>
+                    </tr>
+                  ))}
+                  {filtered.length === 0 && (
+                    <tr><td colSpan={3} className="p-4 text-center text-secondary-600">No tickets match.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </>
       )}

@@ -23,23 +23,24 @@ export async function middleware(req: NextRequest) {
   const token = req.cookies.get('auth')?.value;
   const ok = await isValid(token);
 
-  // Public auth pages: if already logged in, send to dashboard
-  if (pathname.startsWith('/login') || pathname.startsWith('/register')) {
-    if (ok) {
-      const url = req.nextUrl.clone();
-      url.pathname = '/dashboard';
-      return NextResponse.redirect(url);
-    }
-    return NextResponse.next();
-  }
+  const isPublic = pathname === '/' || pathname.startsWith('/login') || pathname.startsWith('/register');
 
-  // For everything else, require auth
   if (!ok) {
+    // Logged out: allow only home, login, register; block others
+    if (isPublic) return NextResponse.next();
     const url = req.nextUrl.clone();
     url.pathname = '/login';
     url.searchParams.set('next', pathname);
     return NextResponse.redirect(url);
   }
+
+  // Logged in: block login/register (and optionally home → send to dashboard)
+  if (pathname.startsWith('/login') || pathname.startsWith('/register') || pathname === '/') {
+    const url = req.nextUrl.clone();
+    url.pathname = '/dashboard';
+    return NextResponse.redirect(url);
+  }
+
   return NextResponse.next();
 }
 
