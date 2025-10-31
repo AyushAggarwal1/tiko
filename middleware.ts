@@ -18,7 +18,7 @@ async function isValid(token: string | undefined) {
   }
 }
 
-export async function middleware(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const token = req.cookies.get('auth')?.value;
   const ok = await isValid(token);
@@ -45,6 +45,8 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  // Run on all pages except API and static assets
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  // Run on all non-static, non-API paths similar to gst-bill
+  matcher: [
+    '/((?!_next/static|_next/image|images|api|favicon.*\\.(?:svg|ico)|robots\\.txt|sitemap\\.xml).*)',
+  ],
 };

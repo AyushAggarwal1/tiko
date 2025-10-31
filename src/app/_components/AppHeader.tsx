@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 function getPageName(pathname: string): string {
   if (!pathname || pathname === '/') return 'Home';
@@ -16,6 +17,28 @@ function getPageName(pathname: string): string {
 export default function AppHeader() {
   const pathname = usePathname();
   const pageName = getPageName(pathname || '/');
+  const [isAuthed, setIsAuthed] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/auth/me', { cache: 'no-store' });
+        const data = await res.json();
+        if (!cancelled) setIsAuthed(!!data?.ok);
+      } catch {
+        if (!cancelled) setIsAuthed(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [pathname]);
+
+  async function logout() {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch {}
+    window.location.href = '/login';
+  }
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b bg-white/80 backdrop-blur">
@@ -27,6 +50,16 @@ export default function AppHeader() {
           </a>
           <span className="text-secondary-400">→</span>
           <span className="text-sm font-medium text-secondary-700">{pageName}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {isAuthed ? (
+            <button onClick={logout} className="rounded-lg bg-secondary-200 px-3 py-2 text-sm text-secondary-900 hover:bg-secondary-300">Logout</button>
+          ) : (
+            <>
+              <a href="/login" className="rounded-lg px-3 py-2 text-sm text-secondary-800 hover:bg-secondary-100">Login</a>
+              <a href="/register" className="rounded-lg bg-primary-600 px-3 py-2 text-sm text-white hover:bg-primary-700">Get started</a>
+            </>
+          )}
         </div>
       </div>
     </header>
