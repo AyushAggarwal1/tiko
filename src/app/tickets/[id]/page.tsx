@@ -94,60 +94,63 @@ export default function TicketDetailPage() {
     if (res.ok) load();
   }
 
+  function StatusBadge({ status }: { status: Ticket['status'] }) {
+    const cls = status === 'DONE' ? 'bg-success-100 text-success-700' : status === 'IN_PROGRESS' ? 'bg-warning-100 text-warning-700' : 'bg-secondary-100 text-secondary-700';
+    const label = status === 'DONE' ? 'Done' : status === 'IN_PROGRESS' ? 'In-progress' : 'To-do';
+    return <span className={`inline-block rounded px-2 py-0.5 text-xs ${cls}`}>{label}</span>;
+  }
+
   return (
-    <main className="p-6 max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <button onClick={() => router.push('/dashboard')} className="text-sm text-primary-600 hover:underline">← Back</button>
-        <h1 className="text-2xl font-semibold">Ticket details</h1>
-        <span />
-      </div>
+    <main className="mx-auto max-w-7xl p-4 md:p-6">
+      {/* Page header removed; using global header */}
 
       {!ticket ? (
         <p className="text-secondary-600">Loading...</p>
       ) : (
         <>
-          <div className="bg-white rounded-xl p-4 shadow mb-4">
+          <div className="mb-4 rounded-xl bg-white p-4 shadow">
             <div className="grid grid-cols-1 gap-3">
               <div>
                 <label className="text-sm text-secondary-600">Title</label>
-                <input value={title} onChange={(e)=>setTitle(e.target.value)} className="w-full border rounded px-2 py-2" />
+                <input value={title} onChange={(e)=>setTitle(e.target.value)} className="mt-1 w-full rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200" />
               </div>
               <div>
                 <label className="text-sm text-secondary-600">Description</label>
-                <textarea value={description} onChange={(e)=>setDescription(e.target.value)} className="w-full border rounded px-2 py-2 min-h-[100px]" />
+                <textarea value={description} onChange={(e)=>setDescription(e.target.value)} className="mt-1 w-full min-h-[120px] rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200" />
               </div>
-              <div className="flex items-center gap-4 text-sm">
-                <div>
-                  <span className="text-secondary-600">Status: </span>
-                  <select value={ticket.status} onChange={(e)=>updateStatus(e.target.value as Ticket['status'])} className="border rounded px-2 py-1">
+              <div className="flex flex-wrap items-center gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-secondary-600">Status:</span>
+                  <StatusBadge status={ticket.status} />
+                  <select value={ticket.status} onChange={(e)=>updateStatus(e.target.value as Ticket['status'])} className="rounded-lg border border-secondary-300 px-2 py-1">
                     <option value="TODO">To-do</option>
                     <option value="IN_PROGRESS">In-progress</option>
                     <option value="DONE">Done</option>
                   </select>
                 </div>
-                <div>
-                  <span className="text-secondary-600">Category: </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-secondary-600">Category:</span>
                   <a href={`/categories/${ticket.category?.id}`} className="text-primary-600 hover:underline">{ticket.category?.name || ''}</a>
                 </div>
-                <div>
-                  <span className="text-secondary-600">Assignee: </span>
-                  <select value={ticket.assigneeId || ''} onChange={(e)=>updateAssignee(e.target.value)} className="border rounded px-2 py-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-secondary-600">Assignee:</span>
+                  <select value={ticket.assigneeId || ''} onChange={(e)=>updateAssignee(e.target.value)} className="rounded-lg border border-secondary-300 px-2 py-1">
                     <option value="">Unassigned</option>
                     {users.map(u => (<option key={u.id} value={u.id}>{u.name || u.email}</option>))}
                   </select>
                 </div>
-                <button onClick={saveMeta} className="ml-auto bg-primary-600 text-white px-3 py-1 rounded">Save</button>
+                <button onClick={saveMeta} className="ml-auto rounded-lg bg-primary-600 px-3 py-2 text-white hover:bg-primary-700">Save</button>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-4 shadow mb-4">
-            <h3 className="font-semibold mb-2">Change history</h3>
+          <div className="mb-4 rounded-xl bg-white p-4 shadow">
+            <h3 className="mb-2 font-semibold">Change history</h3>
             <ul className="space-y-2">
               {history.map(h => (
-                <li key={h.id} className="text-sm bg-secondary-50 rounded p-2">
-                  <span className="font-medium">{h.field}</span>: "{h.oldValue ?? ''}" → "{h.newValue ?? ''}" 
-                  <span className="text-xs text-secondary-500 ml-2">{new Date(h.createdAt).toLocaleString()}</span>
+                <li key={h.id} className="rounded bg-secondary-50 p-2 text-sm">
+                  <span className="font-medium">{h.field}</span>: "{h.oldValue ?? ''}" → "{h.newValue ?? ''}"
+                  <span className="ml-2 text-xs text-secondary-500">{new Date(h.createdAt).toLocaleString()}</span>
                 </li>
               ))}
               {history.length === 0 && (
@@ -156,13 +159,13 @@ export default function TicketDetailPage() {
             </ul>
           </div>
 
-          <div className="bg-white rounded-xl p-4 shadow">
-            <h3 className="font-semibold mb-2">Comments</h3>
-            <ul className="space-y-2 mb-3">
+          <div className="rounded-xl bg-white p-4 shadow">
+            <h3 className="mb-2 font-semibold">Comments</h3>
+            <ul className="mb-3 space-y-2">
               {comments.map((c) => (
-                <li key={c.id} className="bg-secondary-50 border rounded p-2">
+                <li key={c.id} className="rounded border bg-secondary-50 p-2">
                   <p className="text-sm">{c.body}</p>
-                  <p className="text-xs text-secondary-500 mt-1">{new Date(c.createdAt).toLocaleString()}</p>
+                  <p className="mt-1 text-xs text-secondary-500">{new Date(c.createdAt).toLocaleString()}</p>
                 </li>
               ))}
               {comments.length === 0 && (
@@ -170,8 +173,8 @@ export default function TicketDetailPage() {
               )}
             </ul>
             <div className="flex gap-2">
-              <input value={newComment} onChange={(e)=>setNewComment(e.target.value)} className="border rounded px-2 py-1 flex-1" placeholder="Add a comment" />
-              <button onClick={addComment} className="bg-primary-600 text-white px-3 py-1 rounded">Post</button>
+              <input value={newComment} onChange={(e)=>setNewComment(e.target.value)} className="flex-1 rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200" placeholder="Add a comment" />
+              <button onClick={addComment} className="rounded-lg bg-primary-600 px-4 py-2 text-white hover:bg-primary-700">Post</button>
             </div>
           </div>
         </>
