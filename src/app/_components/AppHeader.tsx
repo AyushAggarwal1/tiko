@@ -53,7 +53,10 @@ export default function AppHeader() {
         </div>
         <div className="flex items-center gap-2">
           {isAuthed ? (
-            <button onClick={logout} className="rounded-lg bg-secondary-200 px-3 py-2 text-sm text-secondary-900 hover:bg-secondary-300">Logout</button>
+            <>
+              <a href="/dashboard" className="rounded-lg bg-primary-600 px-3 py-2 text-sm text-white hover:bg-primary-700">Dashboard</a>
+              <button onClick={logout} className="rounded-lg bg-secondary-200 px-3 py-2 text-sm text-secondary-900 hover:bg-secondary-300">Logout</button>
+            </>
           ) : (
             <>
               <a href="/login" className="rounded-lg px-3 py-2 text-sm text-secondary-800 hover:bg-secondary-100">Login</a>

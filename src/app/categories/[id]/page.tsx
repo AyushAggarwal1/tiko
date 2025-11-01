@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import CreateCategoryModal from '@/app/_components/CreateCategoryModal';
 import { useParams, useRouter } from 'next/navigation';
 
 type Category = { id: string; name: string; description?: string | null; ticketsCount?: number };
@@ -21,6 +22,15 @@ export default function CategoryDetailPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<'ALL' | Ticket['status']>('ALL');
+  const [showCreateSub, setShowCreateSub] = useState(false);
+
+  const counts = useMemo(() => {
+    const total = tickets.length;
+    const todo = tickets.filter(t => t.status === 'TODO').length;
+    const inProgress = tickets.filter(t => t.status === 'IN_PROGRESS').length;
+    const done = tickets.filter(t => t.status === 'DONE').length;
+    return { total, todo, inProgress, done };
+  }, [tickets]);
 
   async function load() {
     const res = await fetch(`/api/categories/${id}`);
@@ -44,19 +54,69 @@ export default function CategoryDetailPage() {
   });
 
   return (
-    <main className="mx-auto max-w-7xl p-4 md:p-6">
-      {/* Page header removed; using global header */}
+    <main className="mx-auto max-w-7xl p-4 md:p-6 grid grid-cols-1 gap-6">
+      {/* Header */}
+      <section className="rounded-xl bg-white p-4 shadow">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="mb-1 text-sm text-secondary-600"><a href="/categories" className="hover:underline">Categories</a> <span className="text-secondary-400">/</span> <span>{category?.name || '...'}</span></div>
+            <h1 className="text-xl font-semibold">Category details</h1>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <button onClick={() => setShowCreateSub(true)} className="rounded-lg bg-secondary-200 px-3 py-2 text-secondary-900 hover:bg-secondary-300">Create sub-category</button>
+            <a href={`/tickets?categoryId=${id}`} className="rounded-lg bg-primary-600 px-3 py-2 text-white hover:bg-primary-700">Create ticket</a>
+          </div>
+        </div>
+      </section>
 
       {!category ? (
         <p className="text-secondary-600">Loading...</p>
       ) : (
         <>
-          <div className="mb-4 rounded-xl bg-white p-4 shadow">
-            <h2 className="text-lg font-semibold">{category.name} <span className="text-secondary-500 text-sm">({category.ticketsCount ?? tickets.length} tickets)</span></h2>
-            {category.description && (<p className="mt-2 text-secondary-700">{category.description}</p>)}
-          </div>
+          {showCreateSub && (
+            <CreateCategoryModal open={showCreateSub} onClose={() => setShowCreateSub(false)} defaultParentId={id} onCreated={() => { setShowCreateSub(false); load(); }} />
+          )}
+          {/* Stats */}
+          <section className="grid gap-4 md:grid-cols-4">
+            <div className="rounded-2xl border bg-white p-4 shadow-sm">
+              <div className="text-sm text-secondary-600">Category</div>
+              <div className="mt-1 text-base font-semibold text-secondary-900">{category.name}</div>
+            </div>
+            <div className="rounded-2xl border bg-white p-4 shadow-sm">
+              <div className="text-sm text-secondary-600">Total tickets</div>
+              <div className="mt-1 text-2xl font-semibold text-secondary-900">{counts.total}</div>
+            </div>
+            <div className="rounded-2xl border bg-white p-4 shadow-sm">
+              <div className="text-sm text-secondary-600">In-progress</div>
+              <div className="mt-1 text-2xl font-semibold text-secondary-900">{counts.inProgress}</div>
+            </div>
+            <div className="rounded-2xl border bg-white p-4 shadow-sm">
+              <div className="text-sm text-secondary-600">Done</div>
+              <div className="mt-1 text-2xl font-semibold text-secondary-900">{counts.done}</div>
+            </div>
+          </section>
 
-          <div className="rounded-xl bg-white p-4 shadow">
+          {/* Description and quick actions */}
+          <section className="grid gap-6 md:grid-cols-3">
+            <div className="rounded-xl bg-white p-4 shadow md:col-span-2">
+              <h2 className="mb-2 text-lg font-semibold">About this category</h2>
+              {category.description ? (
+                <p className="text-secondary-700">{category.description}</p>
+              ) : (
+                <p className="text-secondary-600">No description provided.</p>
+              )}
+            </div>
+            <div className="rounded-xl bg-white p-4 shadow">
+              <h3 className="mb-2 text-sm font-semibold text-secondary-700">Quick links</h3>
+              <ul className="space-y-2 text-sm">
+                <li><a href="/categories" className="text-primary-600 hover:underline">Back to Categories</a></li>
+                <li><a href="/tickets" className="text-primary-600 hover:underline">Open Tickets</a></li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Tickets */}
+          <section className="rounded-xl bg-white p-4 shadow">
             <h3 className="mb-2 font-semibold">Tickets in this category</h3>
             <div className="mb-3 grid grid-cols-1 gap-2 md:grid-cols-3">
               <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search title or description" className="rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200" />
@@ -91,7 +151,7 @@ export default function CategoryDetailPage() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </section>
         </>
       )}
     </main>
