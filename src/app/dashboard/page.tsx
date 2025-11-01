@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { StatusBadge } from "@/app/_components/Badges";
 
 type Category = { id: string; name: string; parentId?: string | null; ticketsCount?: number };
 type Ticket = { id: string; title: string; description?: string | null; status: "TODO"|"IN_PROGRESS"|"DONE"; categoryId: string; category?: { id: string; name: string } };
@@ -36,11 +37,7 @@ export default function Dashboard() {
   useEffect(() => { loadCategories(); loadTickets(); loadUsers(); }, []);
   async function logout() { await fetch('/api/auth/logout', { method: 'POST' }); router.push('/login'); }
 
-  function StatusBadge({ status }: { status: Ticket['status'] }) {
-    const cls = status === 'DONE' ? 'bg-success-100 text-success-700' : status === 'IN_PROGRESS' ? 'bg-warning-100 text-warning-700' : 'bg-secondary-100 text-secondary-700';
-    const label = status === 'DONE' ? 'Done' : status === 'IN_PROGRESS' ? 'In-progress' : 'To-do';
-    return <span className={`inline-block rounded px-2 py-0.5 text-xs ${cls}`}>{label}</span>;
-  }
+  
 
   return (
     <main className="mx-auto max-w-7xl p-4 md:p-6 grid grid-cols-1 gap-6">
@@ -51,19 +48,11 @@ export default function Dashboard() {
             <h1 className="text-xl font-semibold">Dashboard</h1>
             <p className="text-sm text-secondary-600">Overview and quick access</p>
           </div>
-          <div className="hidden md:flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <a href="/categories" className="rounded-lg px-3 py-2 text-sm text-secondary-800 hover:bg-secondary-100">Categories</a>
             <a href="/tickets" className="rounded-lg px-3 py-2 text-sm text-secondary-800 hover:bg-secondary-100">Tickets</a>
             <a href="/users" className="rounded-lg px-3 py-2 text-sm text-secondary-800 hover:bg-secondary-100">Users</a>
           </div>
-        </div>
-      </section>
-
-      <section className="rounded-xl bg-white p-2 shadow">
-        <div className="flex items-center gap-2">
-          <a href="/categories" className="rounded-lg px-3 py-2 text-sm text-secondary-800 hover:bg-secondary-100">Categories</a>
-          <a href="/tickets" className="rounded-lg px-3 py-2 text-sm text-secondary-800 hover:bg-secondary-100">Tickets</a>
-          <a href="/users" className="rounded-lg px-3 py-2 text-sm text-secondary-800 hover:bg-secondary-100">Users</a>
         </div>
       </section>
 

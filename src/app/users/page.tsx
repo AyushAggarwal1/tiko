@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useToast } from '@/app/_components/ToastProvider';
 
 type User = { id: string; email: string; name?: string | null };
 
@@ -12,11 +13,18 @@ export default function UsersPage() {
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
 
   async function loadUsers() {
-    const res = await fetch('/api/users');
-    const data = await res.json();
-    setUsers(data.users ?? []);
+    setLoading(true);
+    try {
+      const res = await fetch('/api/users');
+      const data = await res.json();
+      setUsers(data.users ?? []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => { loadUsers(); }, []);
@@ -28,7 +36,9 @@ export default function UsersPage() {
     try {
       const res = await fetch('/api/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name, password }) });
       if (!res.ok) { const d = await res.json().catch(()=>({})); setError(d?.error ?? 'Failed'); return; }
-      setEmail(''); setName(''); setPassword(''); loadUsers();
+      setEmail(''); setName(''); setPassword('');
+      showToast({ title: 'User created', variant: 'success' });
+      loadUsers();
     } finally {
       setCreating(false);
     }
@@ -37,7 +47,7 @@ export default function UsersPage() {
   async function deleteUser(id: string) {
     if (!window.confirm('Remove this user?')) return;
     const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });
-    if (res.ok) loadUsers();
+    if (res.ok) { showToast({ title: 'User removed', variant: 'success' }); loadUsers(); }
   }
 
   return (
@@ -97,7 +107,16 @@ export default function UsersPage() {
         <div className="rounded-xl bg-white p-4 shadow">
           <h2 className="mb-3 text-lg font-semibold">All users</h2>
           <ul className="divide-y">
-            {users.filter(u => !query.trim() || u.email.toLowerCase().includes(query.toLowerCase()) || (u.name || '').toLowerCase().includes(query.toLowerCase())).map(u => (
+            {loading && Array.from({ length: 6 }).map((_, i) => (
+              <li key={i} className="flex items-center justify-between py-2 animate-pulse">
+                <div className="h-4 w-48 rounded bg-secondary-200" />
+                <div className="flex items-center gap-3">
+                  <div className="h-4 w-16 rounded bg-secondary-200" />
+                  <div className="h-4 w-20 rounded bg-secondary-200" />
+                </div>
+              </li>
+            ))}
+            {!loading && users.filter(u => !query.trim() || u.email.toLowerCase().includes(query.toLowerCase()) || (u.name || '').toLowerCase().includes(query.toLowerCase())).map(u => (
               <li key={u.id} className="flex items-center justify-between py-2">
                 <div><p className="font-medium">{u.email}</p>{u.name && <p className="text-sm text-secondary-600">{u.name}</p>}</div>
                 <div className="flex items-center gap-3">

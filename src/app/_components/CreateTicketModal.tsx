@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from 'react';
+import { useToast } from '@/app/_components/ToastProvider';
 
 type Category = { id: string; name: string; parentId?: string | null };
 type TreeNode = Category & { children: TreeNode[] };
@@ -44,6 +45,7 @@ export default function CreateTicketModal({ open, onClose, defaultCategoryId, on
   const [priority, setPriority] = useState<'LOW'|'MEDIUM'|'HIGH'>('MEDIUM');
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   const tree = useMemo(() => buildTree(categories), [categories]);
   const options = useMemo(() => buildOptions(tree), [tree]);
@@ -80,6 +82,7 @@ export default function CreateTicketModal({ open, onClose, defaultCategoryId, on
         setError(d?.error || 'Failed to create ticket');
         return;
       }
+      showToast({ title: 'Ticket created', variant: 'success' });
       onCreated?.();
       onClose();
       setTitle(''); setDescription(''); setCategoryId(''); setPriority('MEDIUM');

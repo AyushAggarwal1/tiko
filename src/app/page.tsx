@@ -62,6 +62,20 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Social proof */}
+      <section className="mx-auto max-w-6xl px-6 pb-4">
+        <div className="rounded-2xl border bg-white p-4 shadow-sm">
+          <p className="text-xs uppercase tracking-wider text-secondary-500">Trusted by product‑minded teams</p>
+          <div className="mt-4 grid grid-cols-2 items-center gap-6 md:grid-cols-5">
+            <div className="h-8 rounded bg-secondary-50" />
+            <div className="h-8 rounded bg-secondary-50" />
+            <div className="h-8 rounded bg-secondary-50" />
+            <div className="h-8 rounded bg-secondary-50" />
+            <div className="h-8 rounded bg-secondary-50" />
+          </div>
+        </div>
+      </section>
+
       {/* Stats */}
       <section className="mx-auto max-w-6xl px-6 pb-8">
         <div className="grid gap-4 rounded-2xl bg-white p-6 shadow md:grid-cols-3">
@@ -118,6 +132,47 @@ export default function Home() {
           <div className="mt-4 flex gap-3">
             <a href="/register" className="rounded-lg bg-white px-4 py-2 text-secondary-900">Create an account</a>
             <a href="/login" className="rounded-lg border border-secondary-600 px-4 py-2 text-white">I already have an account</a>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="mx-auto max-w-6xl px-6 pb-16">
+        <h2 className="text-2xl font-semibold text-secondary-900">How it works</h2>
+        <div className="mt-6 grid gap-6 md:grid-cols-3">
+          {[
+            { n: 1, t: 'Create categories', d: 'Set up a clear hierarchy of categories and sub‑categories.' },
+            { n: 2, t: 'Add tickets', d: 'Log work with title, description, priority, and category.' },
+            { n: 3, t: 'Track progress', d: 'Assign teammates, update status, and keep comments & history.' },
+          ].map((s, i) => (
+            <div key={i} className="rounded-2xl border bg-white p-6 shadow-sm">
+              <div className="grid h-8 w-8 place-items-center rounded-full bg-primary-600 text-white">{s.n}</div>
+              <h3 className="mt-3 font-semibold text-secondary-900">{s.t}</h3>
+              <p className="mt-1 text-sm text-secondary-600">{s.d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="mx-auto max-w-6xl px-6 pb-16">
+        <h2 className="text-2xl font-semibold text-secondary-900">Frequently asked questions</h2>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <div className="rounded-xl border bg-white p-4 shadow-sm">
+            <h3 className="font-semibold text-secondary-900">Is Tiko multi‑tenant?</h3>
+            <p className="mt-1 text-sm text-secondary-700">Yes. Each organization has isolated categories, tickets, users, and history.</p>
+          </div>
+          <div className="rounded-xl border bg-white p-4 shadow-sm">
+            <h3 className="font-semibold text-secondary-900">Can I organize categories hierarchically?</h3>
+            <p className="mt-1 text-sm text-secondary-700">Absolutely. Create categories and sub‑categories at any depth.</p>
+          </div>
+          <div className="rounded-xl border bg-white p-4 shadow-sm">
+            <h3 className="font-semibold text-secondary-900">Do tickets keep an audit history?</h3>
+            <p className="mt-1 text-sm text-secondary-700">Every change is recorded — title, description, status, priority, assignee, and more.</p>
+          </div>
+          <div className="rounded-xl border bg-white p-4 shadow-sm">
+            <h3 className="font-semibold text-secondary-900">How do I invite teammates?</h3>
+            <p className="mt-1 text-sm text-secondary-700">From the Users page, create accounts for teammates in your tenant.</p>
           </div>
         </div>
       </section>
