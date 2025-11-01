@@ -6,7 +6,17 @@ import CreateTicketModal from "@/app/_components/CreateTicketModal";
 import CreateCategoryModal from "@/app/_components/CreateCategoryModal";
 
 type Category = { id: string; name: string; parentId?: string | null };
-type Ticket = { id: string; title: string; description?: string | null; status: "TODO"|"IN_PROGRESS"|"DONE"; priority: 'LOW'|'MEDIUM'|'HIGH'; categoryId: string; category?: { id: string; name: string } };
+type Ticket = {
+  id: string;
+  title: string;
+  description?: string | null;
+  status: "TODO"|"IN_PROGRESS"|"DONE";
+  priority: 'LOW'|'MEDIUM'|'HIGH';
+  categoryId: string;
+  category?: { id: string; name: string };
+  assigneeId?: string | null;
+  assignee?: { id: string; email: string; name?: string | null } | null;
+};
 type User = { id: string; email: string; name?: string | null };
 type TreeNode = Category & { children: TreeNode[] };
 type CategoryOption = { id: string; label: string };
@@ -240,7 +250,7 @@ export default function TicketsPage() {
                   <td className="p-2 font-medium whitespace-nowrap"><a href={`/tickets/${t.id}`} className="text-primary-600 hover:underline">{t.title}</a></td>
                   <td className="p-2 max-w-[24rem] truncate">{t.description || ""}</td>
                   <td className="p-2 whitespace-nowrap">
-                    <select defaultValue={t["assigneeId" as any] || ''} onChange={(e) => updateTicketAssignee(t.id, e.target.value)} className="rounded-lg border border-secondary-300 px-2 py-1">
+                    <select defaultValue={t.assigneeId || ''} onChange={(e) => updateTicketAssignee(t.id, e.target.value)} className="rounded-lg border border-secondary-300 px-2 py-1">
                       <option value="">Unassigned</option>
                       {users.map(u => (<option key={u.id} value={u.id}>{u.name || u.email}</option>))}
                     </select>
