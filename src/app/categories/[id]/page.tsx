@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import CreateCategoryModal from '@/app/_components/CreateCategoryModal';
 import CreateTicketModal from '@/app/_components/CreateTicketModal';
 import { useParams, useRouter } from 'next/navigation';
+import { StatusBadge } from '@/app/_components/Badges';
 
 type Category = { id: string; name: string; description?: string | null; ticketsCount?: number };
 
@@ -27,6 +28,7 @@ export default function CategoryDetailPage() {
   const [priority, setPriority] = useState<'ALL' | Ticket['priority']>('ALL');
   const [showCreateSub, setShowCreateSub] = useState(false);
   const [showCreateTicket, setShowCreateTicket] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const counts = useMemo(() => {
     const total = tickets.length;
@@ -37,19 +39,20 @@ export default function CategoryDetailPage() {
   }, [tickets]);
 
   async function load() {
-    const res = await fetch(`/api/categories/${id}`);
-    const data = await res.json();
-    setCategory(data.category ?? null);
-    setTickets(data.tickets ?? []);
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/categories/${id}`);
+      const data = await res.json();
+      setCategory(data.category ?? null);
+      setTickets(data.tickets ?? []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => { if (id) load(); }, [id]);
 
-  function StatusBadge({ status }: { status: Ticket['status'] }) {
-    const cls = status === 'DONE' ? 'bg-success-100 text-success-700' : status === 'IN_PROGRESS' ? 'bg-warning-100 text-warning-700' : 'bg-secondary-100 text-secondary-700';
-    const label = status === 'DONE' ? 'Done' : status === 'IN_PROGRESS' ? 'In-progress' : 'To-do';
-    return <span className={`inline-block rounded px-2 py-0.5 text-xs ${cls}`}>{label}</span>;
-  }
+  
 
   const filtered = tickets.filter(t => {
     const matchesQuery = query.trim().length === 0 || t.title.toLowerCase().includes(query.toLowerCase()) || (t.description || "").toLowerCase().includes(query.toLowerCase());
@@ -74,8 +77,38 @@ export default function CategoryDetailPage() {
         </div>
       </section>
 
-      {!category ? (
-        <p className="text-secondary-600">Loading...</p>
+      {loading || !category ? (
+        <>
+          <section className="grid gap-4 md:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="rounded-2xl border bg-white p-4 shadow-sm animate-pulse">
+                <div className="h-4 w-24 rounded bg-secondary-200" />
+                <div className="mt-2 h-6 w-16 rounded bg-secondary-200" />
+              </div>
+            ))}
+          </section>
+          <section className="rounded-xl bg-white p-4 shadow animate-pulse">
+            <div className="mb-3 grid grid-cols-1 gap-2 md:grid-cols-3">
+              <div className="h-10 rounded bg-secondary-200" />
+              <div className="h-10 rounded bg-secondary-200" />
+              <div className="h-10 rounded bg-secondary-200" />
+            </div>
+            <div className="overflow-x-auto rounded-xl border">
+              <table className="min-w-full text-sm">
+                <tbody>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i} className="border-t">
+                      <td className="p-2"><div className="h-4 w-40 rounded bg-secondary-200" /></td>
+                      <td className="p-2"><div className="h-4 w-60 rounded bg-secondary-200" /></td>
+                      <td className="p-2"><div className="h-6 w-24 rounded bg-secondary-200" /></td>
+                      <td className="p-2"><div className="h-6 w-20 rounded bg-secondary-200" /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </>
       ) : (
         <>
           {showCreateSub && (

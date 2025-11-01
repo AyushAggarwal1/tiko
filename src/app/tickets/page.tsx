@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useToast } from "@/app/_components/ToastProvider";
+import { StatusBadge } from "@/app/_components/Badges";
 import CreateTicketModal from "@/app/_components/CreateTicketModal";
 import CreateCategoryModal from "@/app/_components/CreateCategoryModal";
 
@@ -60,6 +62,8 @@ export default function TicketsPage() {
   const [ticketPriority, setTicketPriority] = useState<'ALL' | Ticket['priority']>('ALL');
   const [ticketAssignee, setTicketAssignee] = useState<'ALL' | 'UNASSIGNED' | string>('ALL');
   const [ticketCategory, setTicketCategory] = useState<string | "">("");
+  const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
 
   const tree = useMemo(() => buildTree(categories), [categories]);
   const categoryOptions = useMemo(() => buildOptions(tree), [tree]);
@@ -84,9 +88,14 @@ export default function TicketsPage() {
     setCategories(data.categories ?? []);
   }
   async function loadTickets() {
-    const res = await fetch("/api/tickets");
-    const data = await res.json();
-    setTickets(data.tickets ?? []);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/tickets");
+      const data = await res.json();
+      setTickets(data.tickets ?? []);
+    } finally {
+      setLoading(false);
+    }
   }
   async function loadUsers() {
     const res = await fetch('/api/users');
@@ -116,20 +125,16 @@ export default function TicketsPage() {
     });
   }, [tickets, ticketQuery, ticketStatus, ticketCategory, ticketPriority, ticketAssignee]);
 
-  function StatusBadge({ status }: { status: Ticket['status'] }) {
-    const cls = status === 'DONE' ? 'bg-success-100 text-success-700' : status === 'IN_PROGRESS' ? 'bg-warning-100 text-warning-700' : 'bg-secondary-100 text-secondary-700';
-    const label = status === 'DONE' ? 'Done' : status === 'IN_PROGRESS' ? 'In-progress' : 'To-do';
-    return <span className={`inline-block rounded px-2 py-0.5 text-xs ${cls}`}>{label}</span>;
-  }
+  
 
   async function updateTicketStatus(id: string, status: Ticket["status"]) {
     const res = await fetch(`/api/tickets/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }) });
-    if (res.ok) loadTickets();
+    if (res.ok) { showToast({ title: 'Status updated', variant: 'success' }); loadTickets(); }
   }
 
   async function updateTicketAssignee(id: string, assigneeId: string | "") {
     const res = await fetch(`/api/tickets/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ assigneeId: assigneeId || null }) });
-    if (res.ok) loadTickets();
+    if (res.ok) { showToast({ title: 'Assignee updated', variant: 'success' }); loadTickets(); }
   }
 
   return (
@@ -245,6 +250,16 @@ export default function TicketsPage() {
               </tr>
             </thead>
             <tbody>
+              {loading && Array.from({ length: 5 }).map((_, i) => (
+                <tr key={i} className="animate-pulse border-t">
+                  <td className="p-2"><div className="h-4 w-40 rounded bg-secondary-200" /></td>
+                  <td className="p-2"><div className="h-4 w-60 rounded bg-secondary-200" /></td>
+                  <td className="p-2"><div className="h-6 w-28 rounded bg-secondary-200" /></td>
+                  <td className="p-2"><div className="h-6 w-32 rounded bg-secondary-200" /></td>
+                  <td className="p-2"><div className="h-4 w-24 rounded bg-secondary-200" /></td>
+                  <td className="p-2"><div className="h-4 w-16 rounded bg-secondary-200" /></td>
+                </tr>
+              ))}
               {filteredTickets.map((t) => (
                 <tr key={t.id} className="border-t hover:bg-secondary-50/60">
                   <td className="p-2 font-medium whitespace-nowrap"><a href={`/tickets/${t.id}`} className="text-primary-600 hover:underline">{t.title}</a></td>
