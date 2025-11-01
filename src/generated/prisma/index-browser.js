@@ -142,6 +142,7 @@ exports.Prisma.TicketScalarFieldEnum = {
   title: 'title',
   description: 'description',
   status: 'status',
+  priority: 'priority',
   categoryId: 'categoryId',
   assigneeId: 'assigneeId',
   tenantId: 'tenantId',
@@ -153,7 +154,8 @@ exports.Prisma.CommentScalarFieldEnum = {
   id: 'id',
   ticketId: 'ticketId',
   body: 'body',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  userId: 'userId'
 };
 
 exports.Prisma.UserScalarFieldEnum = {
@@ -206,6 +208,12 @@ exports.TicketStatus = exports.$Enums.TicketStatus = {
   TODO: 'TODO',
   IN_PROGRESS: 'IN_PROGRESS',
   DONE: 'DONE'
+};
+
+exports.TicketPriority = exports.$Enums.TicketPriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH'
 };
 
 exports.Prisma.ModelName = {

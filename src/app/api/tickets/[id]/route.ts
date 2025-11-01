@@ -30,7 +30,7 @@ export async function PATCH(
     if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
     const { id } = await params;
     const body = await request.json();
-    const { title, description, status, assigneeId } = body ?? {};
+    const { title, description, status, assigneeId, priority } = body ?? {};
 
     const prev = await prisma.ticket.findUnique({ where: { id } });
     if (!prev) return NextResponse.json({ error: 'not found' }, { status: 404 });
@@ -41,6 +41,7 @@ export async function PATCH(
         ...(title ? { title } : {}),
         ...(description !== undefined ? { description } : {}),
         ...(status ? { status } : {}),
+        ...(priority ? { priority } : {}),
         ...(assigneeId !== undefined ? { assigneeId } : {}),
       },
       include: { assignee: true },
@@ -50,6 +51,8 @@ export async function PATCH(
     if (title && title !== prev.title) historyEntries.push({ field: 'title', oldValue: prev.title, newValue: title });
     if (description !== undefined && description !== prev.description) historyEntries.push({ field: 'description', oldValue: prev.description ?? null, newValue: description ?? null });
     if (status && status !== prev.status) historyEntries.push({ field: 'status', oldValue: prev.status, newValue: status });
+    if (priority && priority !== (prev as any).priority) historyEntries.push({ field: 'priority', oldValue: (prev as any).priority, newValue: priority });
+    if (assigneeId !== undefined && assigneeId !== prev.assigneeId) historyEntries.push({ field: 'assignee', oldValue: prev.assigneeId ?? null, newValue: assigneeId ?? null });
 
     if (historyEntries.length > 0) {
       await prisma.ticketHistory.createMany({

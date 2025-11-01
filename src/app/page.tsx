@@ -96,7 +96,7 @@ export default function Home() {
             </div>
             <div className="grid gap-4 p-6 md:grid-cols-2">
               <div className="rounded-lg border bg-white p-4 shadow-sm">
-                <div className="text-sm font-medium">Category tree</div>
+                <div className="text-sm font-medium">Category Tree</div>
                 <div className="mt-2 h-28 rounded bg-secondary-50" />
               </div>
               <div className="rounded-lg border bg-white p-4 shadow-sm">

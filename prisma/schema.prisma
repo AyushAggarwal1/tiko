@@ -15,6 +15,12 @@ enum TicketStatus {
   DONE
 }
 
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
 model Tenant {
   id          String      @id @default(uuid())
   name        String
@@ -49,6 +55,7 @@ model Ticket {
   title       String
   description String?
   status      TicketStatus  @default(TODO)
+  priority    TicketPriority @default(MEDIUM)
   categoryId  String
   category    Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   assigneeId  String?
@@ -71,8 +78,11 @@ model Comment {
   ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   body      String
   createdAt DateTime @default(now())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([ticketId])
+  @@index([userId])
 }
 
 model User {
@@ -87,6 +97,7 @@ model User {
   assigned     Ticket[]
   history      TicketHistory[]
   invitationsSent Invitation[] @relation("InvitedBy")
+  comments     Comment[]
 }
 
 model TicketHistory {

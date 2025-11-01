@@ -61,11 +61,24 @@ export namespace $Enums {
 
 export type TicketStatus = (typeof TicketStatus)[keyof typeof TicketStatus]
 
+
+export const TicketPriority: {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH'
+};
+
+export type TicketPriority = (typeof TicketPriority)[keyof typeof TicketPriority]
+
 }
 
 export type TicketStatus = $Enums.TicketStatus
 
 export const TicketStatus: typeof $Enums.TicketStatus
+
+export type TicketPriority = $Enums.TicketPriority
+
+export const TicketPriority: typeof $Enums.TicketPriority
 
 /**
  * ##  Prisma Client ʲˢ
@@ -1566,12 +1579,14 @@ export namespace Prisma {
     assigned: number
     history: number
     invitationsSent: number
+    comments: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     assigned?: boolean | UserCountOutputTypeCountAssignedArgs
     history?: boolean | UserCountOutputTypeCountHistoryArgs
     invitationsSent?: boolean | UserCountOutputTypeCountInvitationsSentArgs
+    comments?: boolean | UserCountOutputTypeCountCommentsArgs
   }
 
   // Custom InputTypes
@@ -1604,6 +1619,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountInvitationsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: InvitationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCommentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommentWhereInput
   }
 
 
@@ -3955,6 +3977,7 @@ export namespace Prisma {
     title: string | null
     description: string | null
     status: $Enums.TicketStatus | null
+    priority: $Enums.TicketPriority | null
     categoryId: string | null
     assigneeId: string | null
     tenantId: string | null
@@ -3967,6 +3990,7 @@ export namespace Prisma {
     title: string | null
     description: string | null
     status: $Enums.TicketStatus | null
+    priority: $Enums.TicketPriority | null
     categoryId: string | null
     assigneeId: string | null
     tenantId: string | null
@@ -3979,6 +4003,7 @@ export namespace Prisma {
     title: number
     description: number
     status: number
+    priority: number
     categoryId: number
     assigneeId: number
     tenantId: number
@@ -3993,6 +4018,7 @@ export namespace Prisma {
     title?: true
     description?: true
     status?: true
+    priority?: true
     categoryId?: true
     assigneeId?: true
     tenantId?: true
@@ -4005,6 +4031,7 @@ export namespace Prisma {
     title?: true
     description?: true
     status?: true
+    priority?: true
     categoryId?: true
     assigneeId?: true
     tenantId?: true
@@ -4017,6 +4044,7 @@ export namespace Prisma {
     title?: true
     description?: true
     status?: true
+    priority?: true
     categoryId?: true
     assigneeId?: true
     tenantId?: true
@@ -4102,6 +4130,7 @@ export namespace Prisma {
     title: string
     description: string | null
     status: $Enums.TicketStatus
+    priority: $Enums.TicketPriority
     categoryId: string
     assigneeId: string | null
     tenantId: string | null
@@ -4131,6 +4160,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     status?: boolean
+    priority?: boolean
     categoryId?: boolean
     assigneeId?: boolean
     tenantId?: boolean
@@ -4149,6 +4179,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     status?: boolean
+    priority?: boolean
     categoryId?: boolean
     assigneeId?: boolean
     tenantId?: boolean
@@ -4164,6 +4195,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     status?: boolean
+    priority?: boolean
     categoryId?: boolean
     assigneeId?: boolean
     tenantId?: boolean
@@ -4179,6 +4211,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     status?: boolean
+    priority?: boolean
     categoryId?: boolean
     assigneeId?: boolean
     tenantId?: boolean
@@ -4186,7 +4219,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type TicketOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "status" | "categoryId" | "assigneeId" | "tenantId" | "createdAt" | "updatedAt", ExtArgs["result"]["ticket"]>
+  export type TicketOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "status" | "priority" | "categoryId" | "assigneeId" | "tenantId" | "createdAt" | "updatedAt", ExtArgs["result"]["ticket"]>
   export type TicketInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     category?: boolean | CategoryDefaultArgs<ExtArgs>
     assignee?: boolean | Ticket$assigneeArgs<ExtArgs>
@@ -4220,6 +4253,7 @@ export namespace Prisma {
       title: string
       description: string | null
       status: $Enums.TicketStatus
+      priority: $Enums.TicketPriority
       categoryId: string
       assigneeId: string | null
       tenantId: string | null
@@ -4657,6 +4691,7 @@ export namespace Prisma {
     readonly title: FieldRef<"Ticket", 'String'>
     readonly description: FieldRef<"Ticket", 'String'>
     readonly status: FieldRef<"Ticket", 'TicketStatus'>
+    readonly priority: FieldRef<"Ticket", 'TicketPriority'>
     readonly categoryId: FieldRef<"Ticket", 'String'>
     readonly assigneeId: FieldRef<"Ticket", 'String'>
     readonly tenantId: FieldRef<"Ticket", 'String'>
@@ -5177,6 +5212,7 @@ export namespace Prisma {
     ticketId: string | null
     body: string | null
     createdAt: Date | null
+    userId: string | null
   }
 
   export type CommentMaxAggregateOutputType = {
@@ -5184,6 +5220,7 @@ export namespace Prisma {
     ticketId: string | null
     body: string | null
     createdAt: Date | null
+    userId: string | null
   }
 
   export type CommentCountAggregateOutputType = {
@@ -5191,6 +5228,7 @@ export namespace Prisma {
     ticketId: number
     body: number
     createdAt: number
+    userId: number
     _all: number
   }
 
@@ -5200,6 +5238,7 @@ export namespace Prisma {
     ticketId?: true
     body?: true
     createdAt?: true
+    userId?: true
   }
 
   export type CommentMaxAggregateInputType = {
@@ -5207,6 +5246,7 @@ export namespace Prisma {
     ticketId?: true
     body?: true
     createdAt?: true
+    userId?: true
   }
 
   export type CommentCountAggregateInputType = {
@@ -5214,6 +5254,7 @@ export namespace Prisma {
     ticketId?: true
     body?: true
     createdAt?: true
+    userId?: true
     _all?: true
   }
 
@@ -5294,6 +5335,7 @@ export namespace Prisma {
     ticketId: string
     body: string
     createdAt: Date
+    userId: string | null
     _count: CommentCountAggregateOutputType | null
     _min: CommentMinAggregateOutputType | null
     _max: CommentMaxAggregateOutputType | null
@@ -5318,7 +5360,9 @@ export namespace Prisma {
     ticketId?: boolean
     body?: boolean
     createdAt?: boolean
+    userId?: boolean
     ticket?: boolean | TicketDefaultArgs<ExtArgs>
+    user?: boolean | Comment$userArgs<ExtArgs>
   }, ExtArgs["result"]["comment"]>
 
   export type CommentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5326,7 +5370,9 @@ export namespace Prisma {
     ticketId?: boolean
     body?: boolean
     createdAt?: boolean
+    userId?: boolean
     ticket?: boolean | TicketDefaultArgs<ExtArgs>
+    user?: boolean | Comment$userArgs<ExtArgs>
   }, ExtArgs["result"]["comment"]>
 
   export type CommentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5334,7 +5380,9 @@ export namespace Prisma {
     ticketId?: boolean
     body?: boolean
     createdAt?: boolean
+    userId?: boolean
     ticket?: boolean | TicketDefaultArgs<ExtArgs>
+    user?: boolean | Comment$userArgs<ExtArgs>
   }, ExtArgs["result"]["comment"]>
 
   export type CommentSelectScalar = {
@@ -5342,29 +5390,35 @@ export namespace Prisma {
     ticketId?: boolean
     body?: boolean
     createdAt?: boolean
+    userId?: boolean
   }
 
-  export type CommentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ticketId" | "body" | "createdAt", ExtArgs["result"]["comment"]>
+  export type CommentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ticketId" | "body" | "createdAt" | "userId", ExtArgs["result"]["comment"]>
   export type CommentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     ticket?: boolean | TicketDefaultArgs<ExtArgs>
+    user?: boolean | Comment$userArgs<ExtArgs>
   }
   export type CommentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     ticket?: boolean | TicketDefaultArgs<ExtArgs>
+    user?: boolean | Comment$userArgs<ExtArgs>
   }
   export type CommentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     ticket?: boolean | TicketDefaultArgs<ExtArgs>
+    user?: boolean | Comment$userArgs<ExtArgs>
   }
 
   export type $CommentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Comment"
     objects: {
       ticket: Prisma.$TicketPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       ticketId: string
       body: string
       createdAt: Date
+      userId: string | null
     }, ExtArgs["result"]["comment"]>
     composites: {}
   }
@@ -5760,6 +5814,7 @@ export namespace Prisma {
   export interface Prisma__CommentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     ticket<T extends TicketDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TicketDefaultArgs<ExtArgs>>): Prisma__TicketClient<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends Comment$userArgs<ExtArgs> = {}>(args?: Subset<T, Comment$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5793,6 +5848,7 @@ export namespace Prisma {
     readonly ticketId: FieldRef<"Comment", 'String'>
     readonly body: FieldRef<"Comment", 'String'>
     readonly createdAt: FieldRef<"Comment", 'DateTime'>
+    readonly userId: FieldRef<"Comment", 'String'>
   }
     
 
@@ -6189,6 +6245,25 @@ export namespace Prisma {
   }
 
   /**
+   * Comment.user
+   */
+  export type Comment$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * Comment without action
    */
   export type CommentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6391,6 +6466,7 @@ export namespace Prisma {
     assigned?: boolean | User$assignedArgs<ExtArgs>
     history?: boolean | User$historyArgs<ExtArgs>
     invitationsSent?: boolean | User$invitationsSentArgs<ExtArgs>
+    comments?: boolean | User$commentsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -6432,6 +6508,7 @@ export namespace Prisma {
     assigned?: boolean | User$assignedArgs<ExtArgs>
     history?: boolean | User$historyArgs<ExtArgs>
     invitationsSent?: boolean | User$invitationsSentArgs<ExtArgs>
+    comments?: boolean | User$commentsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6448,6 +6525,7 @@ export namespace Prisma {
       assigned: Prisma.$TicketPayload<ExtArgs>[]
       history: Prisma.$TicketHistoryPayload<ExtArgs>[]
       invitationsSent: Prisma.$InvitationPayload<ExtArgs>[]
+      comments: Prisma.$CommentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6855,6 +6933,7 @@ export namespace Prisma {
     assigned<T extends User$assignedArgs<ExtArgs> = {}>(args?: Subset<T, User$assignedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     history<T extends User$historyArgs<ExtArgs> = {}>(args?: Subset<T, User$historyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invitationsSent<T extends User$invitationsSentArgs<ExtArgs> = {}>(args?: Subset<T, User$invitationsSentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    comments<T extends User$commentsArgs<ExtArgs> = {}>(args?: Subset<T, User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7375,6 +7454,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: InvitationScalarFieldEnum | InvitationScalarFieldEnum[]
+  }
+
+  /**
+   * User.comments
+   */
+  export type User$commentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    where?: CommentWhereInput
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    cursor?: CommentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
   }
 
   /**
@@ -9667,6 +9770,7 @@ export namespace Prisma {
     title: 'title',
     description: 'description',
     status: 'status',
+    priority: 'priority',
     categoryId: 'categoryId',
     assigneeId: 'assigneeId',
     tenantId: 'tenantId',
@@ -9681,7 +9785,8 @@ export namespace Prisma {
     id: 'id',
     ticketId: 'ticketId',
     body: 'body',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    userId: 'userId'
   };
 
   export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
@@ -9796,6 +9901,20 @@ export namespace Prisma {
    * Reference to a field of type 'TicketStatus[]'
    */
   export type ListEnumTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TicketPriority'
+   */
+  export type EnumTicketPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketPriority'>
+    
+
+
+  /**
+   * Reference to a field of type 'TicketPriority[]'
+   */
+  export type ListEnumTicketPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketPriority[]'>
     
 
 
@@ -9958,6 +10077,7 @@ export namespace Prisma {
     title?: StringFilter<"Ticket"> | string
     description?: StringNullableFilter<"Ticket"> | string | null
     status?: EnumTicketStatusFilter<"Ticket"> | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFilter<"Ticket"> | $Enums.TicketPriority
     categoryId?: StringFilter<"Ticket"> | string
     assigneeId?: StringNullableFilter<"Ticket"> | string | null
     tenantId?: StringNullableFilter<"Ticket"> | string | null
@@ -9975,6 +10095,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrderInput | SortOrder
     status?: SortOrder
+    priority?: SortOrder
     categoryId?: SortOrder
     assigneeId?: SortOrderInput | SortOrder
     tenantId?: SortOrderInput | SortOrder
@@ -9995,6 +10116,7 @@ export namespace Prisma {
     title?: StringFilter<"Ticket"> | string
     description?: StringNullableFilter<"Ticket"> | string | null
     status?: EnumTicketStatusFilter<"Ticket"> | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFilter<"Ticket"> | $Enums.TicketPriority
     categoryId?: StringFilter<"Ticket"> | string
     assigneeId?: StringNullableFilter<"Ticket"> | string | null
     tenantId?: StringNullableFilter<"Ticket"> | string | null
@@ -10012,6 +10134,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrderInput | SortOrder
     status?: SortOrder
+    priority?: SortOrder
     categoryId?: SortOrder
     assigneeId?: SortOrderInput | SortOrder
     tenantId?: SortOrderInput | SortOrder
@@ -10030,6 +10153,7 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"Ticket"> | string
     description?: StringNullableWithAggregatesFilter<"Ticket"> | string | null
     status?: EnumTicketStatusWithAggregatesFilter<"Ticket"> | $Enums.TicketStatus
+    priority?: EnumTicketPriorityWithAggregatesFilter<"Ticket"> | $Enums.TicketPriority
     categoryId?: StringWithAggregatesFilter<"Ticket"> | string
     assigneeId?: StringNullableWithAggregatesFilter<"Ticket"> | string | null
     tenantId?: StringNullableWithAggregatesFilter<"Ticket"> | string | null
@@ -10045,7 +10169,9 @@ export namespace Prisma {
     ticketId?: StringFilter<"Comment"> | string
     body?: StringFilter<"Comment"> | string
     createdAt?: DateTimeFilter<"Comment"> | Date | string
+    userId?: StringNullableFilter<"Comment"> | string | null
     ticket?: XOR<TicketScalarRelationFilter, TicketWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type CommentOrderByWithRelationInput = {
@@ -10053,7 +10179,9 @@ export namespace Prisma {
     ticketId?: SortOrder
     body?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrderInput | SortOrder
     ticket?: TicketOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type CommentWhereUniqueInput = Prisma.AtLeast<{
@@ -10064,7 +10192,9 @@ export namespace Prisma {
     ticketId?: StringFilter<"Comment"> | string
     body?: StringFilter<"Comment"> | string
     createdAt?: DateTimeFilter<"Comment"> | Date | string
+    userId?: StringNullableFilter<"Comment"> | string | null
     ticket?: XOR<TicketScalarRelationFilter, TicketWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type CommentOrderByWithAggregationInput = {
@@ -10072,6 +10202,7 @@ export namespace Prisma {
     ticketId?: SortOrder
     body?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrderInput | SortOrder
     _count?: CommentCountOrderByAggregateInput
     _max?: CommentMaxOrderByAggregateInput
     _min?: CommentMinOrderByAggregateInput
@@ -10085,6 +10216,7 @@ export namespace Prisma {
     ticketId?: StringWithAggregatesFilter<"Comment"> | string
     body?: StringWithAggregatesFilter<"Comment"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Comment"> | Date | string
+    userId?: StringNullableWithAggregatesFilter<"Comment"> | string | null
   }
 
   export type UserWhereInput = {
@@ -10102,6 +10234,7 @@ export namespace Prisma {
     assigned?: TicketListRelationFilter
     history?: TicketHistoryListRelationFilter
     invitationsSent?: InvitationListRelationFilter
+    comments?: CommentListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -10116,6 +10249,7 @@ export namespace Prisma {
     assigned?: TicketOrderByRelationAggregateInput
     history?: TicketHistoryOrderByRelationAggregateInput
     invitationsSent?: InvitationOrderByRelationAggregateInput
+    comments?: CommentOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -10133,6 +10267,7 @@ export namespace Prisma {
     assigned?: TicketListRelationFilter
     history?: TicketHistoryListRelationFilter
     invitationsSent?: InvitationListRelationFilter
+    comments?: CommentListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -10453,6 +10588,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     createdAt?: Date | string
     updatedAt?: Date | string
     category: CategoryCreateNestedOneWithoutTicketsInput
@@ -10467,6 +10603,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     categoryId: string
     assigneeId?: string | null
     tenantId?: string | null
@@ -10481,6 +10618,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneRequiredWithoutTicketsNestedInput
@@ -10495,6 +10633,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     categoryId?: StringFieldUpdateOperationsInput | string
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10509,6 +10648,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     categoryId: string
     assigneeId?: string | null
     tenantId?: string | null
@@ -10521,6 +10661,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10530,6 +10671,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     categoryId?: StringFieldUpdateOperationsInput | string
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10542,6 +10684,7 @@ export namespace Prisma {
     body: string
     createdAt?: Date | string
     ticket: TicketCreateNestedOneWithoutCommentsInput
+    user?: UserCreateNestedOneWithoutCommentsInput
   }
 
   export type CommentUncheckedCreateInput = {
@@ -10549,6 +10692,7 @@ export namespace Prisma {
     ticketId: string
     body: string
     createdAt?: Date | string
+    userId?: string | null
   }
 
   export type CommentUpdateInput = {
@@ -10556,6 +10700,7 @@ export namespace Prisma {
     body?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ticket?: TicketUpdateOneRequiredWithoutCommentsNestedInput
+    user?: UserUpdateOneWithoutCommentsNestedInput
   }
 
   export type CommentUncheckedUpdateInput = {
@@ -10563,6 +10708,7 @@ export namespace Prisma {
     ticketId?: StringFieldUpdateOperationsInput | string
     body?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CommentCreateManyInput = {
@@ -10570,6 +10716,7 @@ export namespace Prisma {
     ticketId: string
     body: string
     createdAt?: Date | string
+    userId?: string | null
   }
 
   export type CommentUpdateManyMutationInput = {
@@ -10583,6 +10730,7 @@ export namespace Prisma {
     ticketId?: StringFieldUpdateOperationsInput | string
     body?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserCreateInput = {
@@ -10596,6 +10744,7 @@ export namespace Prisma {
     assigned?: TicketCreateNestedManyWithoutAssigneeInput
     history?: TicketHistoryCreateNestedManyWithoutUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    comments?: CommentCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -10609,6 +10758,7 @@ export namespace Prisma {
     assigned?: TicketUncheckedCreateNestedManyWithoutAssigneeInput
     history?: TicketHistoryUncheckedCreateNestedManyWithoutUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -10622,6 +10772,7 @@ export namespace Prisma {
     assigned?: TicketUpdateManyWithoutAssigneeNestedInput
     history?: TicketHistoryUpdateManyWithoutUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -10635,6 +10786,7 @@ export namespace Prisma {
     assigned?: TicketUncheckedUpdateManyWithoutAssigneeNestedInput
     history?: TicketHistoryUncheckedUpdateManyWithoutUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -11025,6 +11177,13 @@ export namespace Prisma {
     not?: NestedEnumTicketStatusFilter<$PrismaModel> | $Enums.TicketStatus
   }
 
+  export type EnumTicketPriorityFilter<$PrismaModel = never> = {
+    equals?: $Enums.TicketPriority | EnumTicketPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.TicketPriority[] | ListEnumTicketPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TicketPriority[] | ListEnumTicketPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumTicketPriorityFilter<$PrismaModel> | $Enums.TicketPriority
+  }
+
   export type CategoryScalarRelationFilter = {
     is?: CategoryWhereInput
     isNot?: CategoryWhereInput
@@ -11060,6 +11219,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     status?: SortOrder
+    priority?: SortOrder
     categoryId?: SortOrder
     assigneeId?: SortOrder
     tenantId?: SortOrder
@@ -11072,6 +11232,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     status?: SortOrder
+    priority?: SortOrder
     categoryId?: SortOrder
     assigneeId?: SortOrder
     tenantId?: SortOrder
@@ -11084,6 +11245,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     status?: SortOrder
+    priority?: SortOrder
     categoryId?: SortOrder
     assigneeId?: SortOrder
     tenantId?: SortOrder
@@ -11101,6 +11263,16 @@ export namespace Prisma {
     _max?: NestedEnumTicketStatusFilter<$PrismaModel>
   }
 
+  export type EnumTicketPriorityWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TicketPriority | EnumTicketPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.TicketPriority[] | ListEnumTicketPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TicketPriority[] | ListEnumTicketPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumTicketPriorityWithAggregatesFilter<$PrismaModel> | $Enums.TicketPriority
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTicketPriorityFilter<$PrismaModel>
+    _max?: NestedEnumTicketPriorityFilter<$PrismaModel>
+  }
+
   export type TicketScalarRelationFilter = {
     is?: TicketWhereInput
     isNot?: TicketWhereInput
@@ -11111,6 +11283,7 @@ export namespace Prisma {
     ticketId?: SortOrder
     body?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type CommentMaxOrderByAggregateInput = {
@@ -11118,6 +11291,7 @@ export namespace Prisma {
     ticketId?: SortOrder
     body?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type CommentMinOrderByAggregateInput = {
@@ -11125,6 +11299,7 @@ export namespace Prisma {
     ticketId?: SortOrder
     body?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type UserCountOrderByAggregateInput = {
@@ -11579,6 +11754,10 @@ export namespace Prisma {
     set?: $Enums.TicketStatus
   }
 
+  export type EnumTicketPriorityFieldUpdateOperationsInput = {
+    set?: $Enums.TicketPriority
+  }
+
   export type CategoryUpdateOneRequiredWithoutTicketsNestedInput = {
     create?: XOR<CategoryCreateWithoutTicketsInput, CategoryUncheckedCreateWithoutTicketsInput>
     connectOrCreate?: CategoryCreateOrConnectWithoutTicketsInput
@@ -11669,12 +11848,28 @@ export namespace Prisma {
     connect?: TicketWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutCommentsInput = {
+    create?: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCommentsInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type TicketUpdateOneRequiredWithoutCommentsNestedInput = {
     create?: XOR<TicketCreateWithoutCommentsInput, TicketUncheckedCreateWithoutCommentsInput>
     connectOrCreate?: TicketCreateOrConnectWithoutCommentsInput
     upsert?: TicketUpsertWithoutCommentsInput
     connect?: TicketWhereUniqueInput
     update?: XOR<XOR<TicketUpdateToOneWithWhereWithoutCommentsInput, TicketUpdateWithoutCommentsInput>, TicketUncheckedUpdateWithoutCommentsInput>
+  }
+
+  export type UserUpdateOneWithoutCommentsNestedInput = {
+    create?: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCommentsInput
+    upsert?: UserUpsertWithoutCommentsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCommentsInput, UserUpdateWithoutCommentsInput>, UserUncheckedUpdateWithoutCommentsInput>
   }
 
   export type TenantCreateNestedOneWithoutUsersInput = {
@@ -11704,6 +11899,13 @@ export namespace Prisma {
     connect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
   }
 
+  export type CommentCreateNestedManyWithoutUserInput = {
+    create?: XOR<CommentCreateWithoutUserInput, CommentUncheckedCreateWithoutUserInput> | CommentCreateWithoutUserInput[] | CommentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutUserInput | CommentCreateOrConnectWithoutUserInput[]
+    createMany?: CommentCreateManyUserInputEnvelope
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+  }
+
   export type TicketUncheckedCreateNestedManyWithoutAssigneeInput = {
     create?: XOR<TicketCreateWithoutAssigneeInput, TicketUncheckedCreateWithoutAssigneeInput> | TicketCreateWithoutAssigneeInput[] | TicketUncheckedCreateWithoutAssigneeInput[]
     connectOrCreate?: TicketCreateOrConnectWithoutAssigneeInput | TicketCreateOrConnectWithoutAssigneeInput[]
@@ -11723,6 +11925,13 @@ export namespace Prisma {
     connectOrCreate?: InvitationCreateOrConnectWithoutInvitedByInput | InvitationCreateOrConnectWithoutInvitedByInput[]
     createMany?: InvitationCreateManyInvitedByInputEnvelope
     connect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
+  }
+
+  export type CommentUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<CommentCreateWithoutUserInput, CommentUncheckedCreateWithoutUserInput> | CommentCreateWithoutUserInput[] | CommentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutUserInput | CommentCreateOrConnectWithoutUserInput[]
+    createMany?: CommentCreateManyUserInputEnvelope
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
   }
 
   export type TenantUpdateOneWithoutUsersNestedInput = {
@@ -11777,6 +11986,20 @@ export namespace Prisma {
     deleteMany?: InvitationScalarWhereInput | InvitationScalarWhereInput[]
   }
 
+  export type CommentUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CommentCreateWithoutUserInput, CommentUncheckedCreateWithoutUserInput> | CommentCreateWithoutUserInput[] | CommentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutUserInput | CommentCreateOrConnectWithoutUserInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutUserInput | CommentUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CommentCreateManyUserInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutUserInput | CommentUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutUserInput | CommentUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
   export type TicketUncheckedUpdateManyWithoutAssigneeNestedInput = {
     create?: XOR<TicketCreateWithoutAssigneeInput, TicketUncheckedCreateWithoutAssigneeInput> | TicketCreateWithoutAssigneeInput[] | TicketUncheckedCreateWithoutAssigneeInput[]
     connectOrCreate?: TicketCreateOrConnectWithoutAssigneeInput | TicketCreateOrConnectWithoutAssigneeInput[]
@@ -11817,6 +12040,20 @@ export namespace Prisma {
     update?: InvitationUpdateWithWhereUniqueWithoutInvitedByInput | InvitationUpdateWithWhereUniqueWithoutInvitedByInput[]
     updateMany?: InvitationUpdateManyWithWhereWithoutInvitedByInput | InvitationUpdateManyWithWhereWithoutInvitedByInput[]
     deleteMany?: InvitationScalarWhereInput | InvitationScalarWhereInput[]
+  }
+
+  export type CommentUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CommentCreateWithoutUserInput, CommentUncheckedCreateWithoutUserInput> | CommentCreateWithoutUserInput[] | CommentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutUserInput | CommentCreateOrConnectWithoutUserInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutUserInput | CommentUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CommentCreateManyUserInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutUserInput | CommentUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutUserInput | CommentUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
   }
 
   export type TicketCreateNestedOneWithoutHistoryInput = {
@@ -11993,6 +12230,13 @@ export namespace Prisma {
     not?: NestedEnumTicketStatusFilter<$PrismaModel> | $Enums.TicketStatus
   }
 
+  export type NestedEnumTicketPriorityFilter<$PrismaModel = never> = {
+    equals?: $Enums.TicketPriority | EnumTicketPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.TicketPriority[] | ListEnumTicketPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TicketPriority[] | ListEnumTicketPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumTicketPriorityFilter<$PrismaModel> | $Enums.TicketPriority
+  }
+
   export type NestedEnumTicketStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.TicketStatus | EnumTicketStatusFieldRefInput<$PrismaModel>
     in?: $Enums.TicketStatus[] | ListEnumTicketStatusFieldRefInput<$PrismaModel>
@@ -12001,6 +12245,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTicketStatusFilter<$PrismaModel>
     _max?: NestedEnumTicketStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTicketPriorityWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TicketPriority | EnumTicketPriorityFieldRefInput<$PrismaModel>
+    in?: $Enums.TicketPriority[] | ListEnumTicketPriorityFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TicketPriority[] | ListEnumTicketPriorityFieldRefInput<$PrismaModel>
+    not?: NestedEnumTicketPriorityWithAggregatesFilter<$PrismaModel> | $Enums.TicketPriority
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTicketPriorityFilter<$PrismaModel>
+    _max?: NestedEnumTicketPriorityFilter<$PrismaModel>
   }
 
   export type UserCreateWithoutTenantInput = {
@@ -12013,6 +12267,7 @@ export namespace Prisma {
     assigned?: TicketCreateNestedManyWithoutAssigneeInput
     history?: TicketHistoryCreateNestedManyWithoutUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    comments?: CommentCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTenantInput = {
@@ -12025,6 +12280,7 @@ export namespace Prisma {
     assigned?: TicketUncheckedCreateNestedManyWithoutAssigneeInput
     history?: TicketHistoryUncheckedCreateNestedManyWithoutUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTenantInput = {
@@ -12074,6 +12330,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     createdAt?: Date | string
     updatedAt?: Date | string
     category: CategoryCreateNestedOneWithoutTicketsInput
@@ -12087,6 +12344,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     categoryId: string
     assigneeId?: string | null
     createdAt?: Date | string
@@ -12219,6 +12477,7 @@ export namespace Prisma {
     title?: StringFilter<"Ticket"> | string
     description?: StringNullableFilter<"Ticket"> | string | null
     status?: EnumTicketStatusFilter<"Ticket"> | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFilter<"Ticket"> | $Enums.TicketPriority
     categoryId?: StringFilter<"Ticket"> | string
     assigneeId?: StringNullableFilter<"Ticket"> | string | null
     tenantId?: StringNullableFilter<"Ticket"> | string | null
@@ -12321,6 +12580,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     createdAt?: Date | string
     updatedAt?: Date | string
     assignee?: UserCreateNestedOneWithoutAssignedInput
@@ -12334,6 +12594,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     assigneeId?: string | null
     tenantId?: string | null
     createdAt?: Date | string
@@ -12510,6 +12771,7 @@ export namespace Prisma {
     tenant?: TenantCreateNestedOneWithoutUsersInput
     history?: TicketHistoryCreateNestedManyWithoutUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    comments?: CommentCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAssignedInput = {
@@ -12522,6 +12784,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     history?: TicketHistoryUncheckedCreateNestedManyWithoutUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAssignedInput = {
@@ -12533,12 +12796,14 @@ export namespace Prisma {
     id?: string
     body: string
     createdAt?: Date | string
+    user?: UserCreateNestedOneWithoutCommentsInput
   }
 
   export type CommentUncheckedCreateWithoutTicketInput = {
     id?: string
     body: string
     createdAt?: Date | string
+    userId?: string | null
   }
 
   export type CommentCreateOrConnectWithoutTicketInput = {
@@ -12658,6 +12923,7 @@ export namespace Prisma {
     tenant?: TenantUpdateOneWithoutUsersNestedInput
     history?: TicketHistoryUpdateManyWithoutUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedInput = {
@@ -12670,6 +12936,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     history?: TicketHistoryUncheckedUpdateManyWithoutUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CommentUpsertWithWhereUniqueWithoutTicketInput = {
@@ -12696,6 +12963,7 @@ export namespace Prisma {
     ticketId?: StringFilter<"Comment"> | string
     body?: StringFilter<"Comment"> | string
     createdAt?: DateTimeFilter<"Comment"> | Date | string
+    userId?: StringNullableFilter<"Comment"> | string | null
   }
 
   export type TicketHistoryUpsertWithWhereUniqueWithoutTicketInput = {
@@ -12763,6 +13031,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     createdAt?: Date | string
     updatedAt?: Date | string
     category: CategoryCreateNestedOneWithoutTicketsInput
@@ -12776,6 +13045,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     categoryId: string
     assigneeId?: string | null
     tenantId?: string | null
@@ -12787,6 +13057,37 @@ export namespace Prisma {
   export type TicketCreateOrConnectWithoutCommentsInput = {
     where: TicketWhereUniqueInput
     create: XOR<TicketCreateWithoutCommentsInput, TicketUncheckedCreateWithoutCommentsInput>
+  }
+
+  export type UserCreateWithoutCommentsInput = {
+    id?: string
+    email: string
+    name?: string | null
+    passwordHash: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant?: TenantCreateNestedOneWithoutUsersInput
+    assigned?: TicketCreateNestedManyWithoutAssigneeInput
+    history?: TicketHistoryCreateNestedManyWithoutUserInput
+    invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+  }
+
+  export type UserUncheckedCreateWithoutCommentsInput = {
+    id?: string
+    email: string
+    name?: string | null
+    passwordHash: string
+    tenantId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    assigned?: TicketUncheckedCreateNestedManyWithoutAssigneeInput
+    history?: TicketHistoryUncheckedCreateNestedManyWithoutUserInput
+    invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  }
+
+  export type UserCreateOrConnectWithoutCommentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
   }
 
   export type TicketUpsertWithoutCommentsInput = {
@@ -12805,6 +13106,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneRequiredWithoutTicketsNestedInput
@@ -12818,12 +13120,50 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     categoryId?: StringFieldUpdateOperationsInput | string
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     history?: TicketHistoryUncheckedUpdateManyWithoutTicketNestedInput
+  }
+
+  export type UserUpsertWithoutCommentsInput = {
+    update: XOR<UserUpdateWithoutCommentsInput, UserUncheckedUpdateWithoutCommentsInput>
+    create: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCommentsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCommentsInput, UserUncheckedUpdateWithoutCommentsInput>
+  }
+
+  export type UserUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
+    assigned?: TicketUpdateManyWithoutAssigneeNestedInput
+    history?: TicketHistoryUpdateManyWithoutUserNestedInput
+    invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assigned?: TicketUncheckedUpdateManyWithoutAssigneeNestedInput
+    history?: TicketHistoryUncheckedUpdateManyWithoutUserNestedInput
+    invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   }
 
   export type TenantCreateWithoutUsersInput = {
@@ -12856,6 +13196,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     createdAt?: Date | string
     updatedAt?: Date | string
     category: CategoryCreateNestedOneWithoutTicketsInput
@@ -12869,6 +13210,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     categoryId: string
     tenantId?: string | null
     createdAt?: Date | string
@@ -12944,6 +13286,30 @@ export namespace Prisma {
 
   export type InvitationCreateManyInvitedByInputEnvelope = {
     data: InvitationCreateManyInvitedByInput | InvitationCreateManyInvitedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CommentCreateWithoutUserInput = {
+    id?: string
+    body: string
+    createdAt?: Date | string
+    ticket: TicketCreateNestedOneWithoutCommentsInput
+  }
+
+  export type CommentUncheckedCreateWithoutUserInput = {
+    id?: string
+    ticketId: string
+    body: string
+    createdAt?: Date | string
+  }
+
+  export type CommentCreateOrConnectWithoutUserInput = {
+    where: CommentWhereUniqueInput
+    create: XOR<CommentCreateWithoutUserInput, CommentUncheckedCreateWithoutUserInput>
+  }
+
+  export type CommentCreateManyUserInputEnvelope = {
+    data: CommentCreateManyUserInput | CommentCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -13026,11 +13392,28 @@ export namespace Prisma {
     data: XOR<InvitationUpdateManyMutationInput, InvitationUncheckedUpdateManyWithoutInvitedByInput>
   }
 
+  export type CommentUpsertWithWhereUniqueWithoutUserInput = {
+    where: CommentWhereUniqueInput
+    update: XOR<CommentUpdateWithoutUserInput, CommentUncheckedUpdateWithoutUserInput>
+    create: XOR<CommentCreateWithoutUserInput, CommentUncheckedCreateWithoutUserInput>
+  }
+
+  export type CommentUpdateWithWhereUniqueWithoutUserInput = {
+    where: CommentWhereUniqueInput
+    data: XOR<CommentUpdateWithoutUserInput, CommentUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CommentUpdateManyWithWhereWithoutUserInput = {
+    where: CommentScalarWhereInput
+    data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyWithoutUserInput>
+  }
+
   export type TicketCreateWithoutHistoryInput = {
     id?: string
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     createdAt?: Date | string
     updatedAt?: Date | string
     category: CategoryCreateNestedOneWithoutTicketsInput
@@ -13044,6 +13427,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     categoryId: string
     assigneeId?: string | null
     tenantId?: string | null
@@ -13067,6 +13451,7 @@ export namespace Prisma {
     tenant?: TenantCreateNestedOneWithoutUsersInput
     assigned?: TicketCreateNestedManyWithoutAssigneeInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    comments?: CommentCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutHistoryInput = {
@@ -13079,6 +13464,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     assigned?: TicketUncheckedCreateNestedManyWithoutAssigneeInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutHistoryInput = {
@@ -13102,6 +13488,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneRequiredWithoutTicketsNestedInput
@@ -13115,6 +13502,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     categoryId?: StringFieldUpdateOperationsInput | string
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13144,6 +13532,7 @@ export namespace Prisma {
     tenant?: TenantUpdateOneWithoutUsersNestedInput
     assigned?: TicketUpdateManyWithoutAssigneeNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutHistoryInput = {
@@ -13156,6 +13545,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     assigned?: TicketUncheckedUpdateManyWithoutAssigneeNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutInvitationsSentInput = {
@@ -13168,6 +13558,7 @@ export namespace Prisma {
     tenant?: TenantCreateNestedOneWithoutUsersInput
     assigned?: TicketCreateNestedManyWithoutAssigneeInput
     history?: TicketHistoryCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutInvitationsSentInput = {
@@ -13180,6 +13571,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     assigned?: TicketUncheckedCreateNestedManyWithoutAssigneeInput
     history?: TicketHistoryUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutInvitationsSentInput = {
@@ -13233,6 +13625,7 @@ export namespace Prisma {
     tenant?: TenantUpdateOneWithoutUsersNestedInput
     assigned?: TicketUpdateManyWithoutAssigneeNestedInput
     history?: TicketHistoryUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInvitationsSentInput = {
@@ -13245,6 +13638,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     assigned?: TicketUncheckedUpdateManyWithoutAssigneeNestedInput
     history?: TicketHistoryUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TenantUpsertWithoutInvitationsInput = {
@@ -13301,6 +13695,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     categoryId: string
     assigneeId?: string | null
     createdAt?: Date | string
@@ -13328,6 +13723,7 @@ export namespace Prisma {
     assigned?: TicketUpdateManyWithoutAssigneeNestedInput
     history?: TicketHistoryUpdateManyWithoutUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTenantInput = {
@@ -13340,6 +13736,7 @@ export namespace Prisma {
     assigned?: TicketUncheckedUpdateManyWithoutAssigneeNestedInput
     history?: TicketHistoryUncheckedUpdateManyWithoutUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutTenantInput = {
@@ -13387,6 +13784,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneRequiredWithoutTicketsNestedInput
@@ -13400,6 +13798,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     categoryId?: StringFieldUpdateOperationsInput | string
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13413,6 +13812,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     categoryId?: StringFieldUpdateOperationsInput | string
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13466,6 +13866,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     assigneeId?: string | null
     tenantId?: string | null
     createdAt?: Date | string
@@ -13508,6 +13909,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     assignee?: UserUpdateOneWithoutAssignedNestedInput
@@ -13521,6 +13923,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13534,6 +13937,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13544,6 +13948,7 @@ export namespace Prisma {
     id?: string
     body: string
     createdAt?: Date | string
+    userId?: string | null
   }
 
   export type TicketHistoryCreateManyTicketInput = {
@@ -13559,18 +13964,21 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     body?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutCommentsNestedInput
   }
 
   export type CommentUncheckedUpdateWithoutTicketInput = {
     id?: StringFieldUpdateOperationsInput | string
     body?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CommentUncheckedUpdateManyWithoutTicketInput = {
     id?: StringFieldUpdateOperationsInput | string
     body?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TicketHistoryUpdateWithoutTicketInput = {
@@ -13605,6 +14013,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     status?: $Enums.TicketStatus
+    priority?: $Enums.TicketPriority
     categoryId: string
     tenantId?: string | null
     createdAt?: Date | string
@@ -13631,11 +14040,19 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type CommentCreateManyUserInput = {
+    id?: string
+    ticketId: string
+    body: string
+    createdAt?: Date | string
+  }
+
   export type TicketUpdateWithoutAssigneeInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneRequiredWithoutTicketsNestedInput
@@ -13649,6 +14066,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     categoryId?: StringFieldUpdateOperationsInput | string
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13662,6 +14080,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     categoryId?: StringFieldUpdateOperationsInput | string
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13726,6 +14145,27 @@ export namespace Prisma {
     tenantId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ticket?: TicketUpdateOneRequiredWithoutCommentsNestedInput
+  }
+
+  export type CommentUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticketId?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticketId?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

@@ -13,6 +13,7 @@ export async function GET(
     const comments = await prisma.comment.findMany({
       where: { ticketId },
       orderBy: { createdAt: 'asc' },
+      include: { user: true },
     });
     return NextResponse.json({ comments });
   } catch (error) {
@@ -34,10 +35,14 @@ export async function POST(
       return NextResponse.json({ error: 'text is required' }, { status: 400 });
     }
     const comment = await prisma.comment.create({
-      data: { ticketId, body: text },
+      data: { ticketId, body: text, userId: user.id },
+      include: { user: true },
     });
     return NextResponse.json({ comment }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to add comment' }, { status: 500 });
+    console.error('Add comment error', error);
+    // surface prisma codes to aid debugging (e.g., missing column/user)
+    const anyErr: any = error as any;
+    return NextResponse.json({ error: 'Failed to add comment', code: anyErr?.code, message: anyErr?.message }, { status: 500 });
   }
 }
