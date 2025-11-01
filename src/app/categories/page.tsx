@@ -122,6 +122,10 @@ export default function CategoriesPage() {
               <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 3a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H4a1 1 0 1 1 0-2h5V4a1 1 0 0 1 1-1z"/></svg>
               New category
             </button>
+            <a href="/tickets?newTicket=1" className="inline-flex items-center gap-2 rounded-xl bg-primary-50 px-4 py-2.5 text-primary-700 ring-2 ring-primary-200 transition hover:bg-primary-100 focus:outline-none focus:ring-4 focus:ring-primary-300">
+              <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 3a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H4a1 1 0 1 1 0-2h5V4a1 1 0 0 1 1-1z"/></svg>
+              New ticket
+            </a>
             <a href="/tickets" className="rounded-lg px-3 py-2 text-secondary-800 hover:bg-secondary-100">Tickets</a>
             <a href="/users" className="rounded-lg px-3 py-2 text-secondary-800 hover:bg-secondary-100">Users</a>
           </div>
@@ -193,7 +197,10 @@ export default function CategoriesPage() {
               <li key={t.id} className="flex items-center justify-between p-2">
                 <div className="min-w-0">
                   <a href={`/tickets/${t.id}`} className="truncate text-primary-600 hover:underline">{t.title}</a>
-                  <div className="text-xs text-secondary-600">{t.category?.name || 'Uncategorized'}</div>
+                  <div className="flex items-center gap-2 text-xs text-secondary-600">
+                    <span>{t.category?.name || 'Uncategorized'}</span>
+                    <span className={`inline-block rounded px-2 py-0.5 text-xs ${((t as any).priority)==='HIGH'?'bg-danger-100 text-danger-700':((t as any).priority)==='MEDIUM'?'bg-warning-100 text-warning-700':'bg-success-100 text-success-700'}`}>{(((t as any).priority) || 'MEDIUM').charAt(0)+(((t as any).priority) || 'MEDIUM').slice(1).toLowerCase()}</span>
+                  </div>
                 </div>
                 <div className="ml-2 whitespace-nowrap text-xs text-secondary-600">{new Date(t.createdAt).toLocaleDateString()}</div>
               </li>

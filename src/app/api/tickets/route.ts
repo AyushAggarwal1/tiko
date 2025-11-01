@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     if (!me?.tenantId) return NextResponse.json({ error: 'no tenant' }, { status: 400 });
 
     const body = await request.json();
-    const { title, description, status, categoryId, assigneeId } = body ?? {};
+    const { title, description, status, categoryId, assigneeId, priority } = body ?? {};
     if (!title || typeof title !== 'string') {
       return NextResponse.json({ error: 'Title is required' }, { status: 400 });
     }
@@ -40,6 +40,7 @@ export async function POST(request: Request) {
         title,
         description: description ?? null,
         status: status ?? 'TODO',
+        priority: priority && ['LOW','MEDIUM','HIGH'].includes(priority) ? priority : 'MEDIUM',
         categoryId,
         assigneeId: assigneeId ?? null,
         tenantId: me.tenantId,

@@ -2,9 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import CreateTicketModal from "@/app/_components/CreateTicketModal";
+import CreateCategoryModal from "@/app/_components/CreateCategoryModal";
 
 type Category = { id: string; name: string; parentId?: string | null };
-type Ticket = { id: string; title: string; description?: string | null; status: "TODO"|"IN_PROGRESS"|"DONE"; categoryId: string; category?: { id: string; name: string } };
+type Ticket = { id: string; title: string; description?: string | null; status: "TODO"|"IN_PROGRESS"|"DONE"; priority: 'LOW'|'MEDIUM'|'HIGH'; categoryId: string; category?: { id: string; name: string } };
 type User = { id: string; email: string; name?: string | null };
 type TreeNode = Category & { children: TreeNode[] };
 type CategoryOption = { id: string; label: string };
@@ -40,15 +42,13 @@ export default function TicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [users, setUsers] = useState<User[]>([]);
 
-  const [newTicketTitle, setNewTicketTitle] = useState("");
-  const [newTicketDesc, setNewTicketDesc] = useState("");
-  const [ticketCategoryId, setTicketCategoryId] = useState<string | "">("");
-  const [creating, setCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateCategory, setShowCreateCategory] = useState(false);
 
   const [ticketQuery, setTicketQuery] = useState("");
   const [ticketStatus, setTicketStatus] = useState<"ALL" | Ticket["status"]>("ALL");
+  const [ticketPriority, setTicketPriority] = useState<'ALL' | Ticket['priority']>('ALL');
+  const [ticketAssignee, setTicketAssignee] = useState<'ALL' | 'UNASSIGNED' | string>('ALL');
   const [ticketCategory, setTicketCategory] = useState<string | "">("");
 
   const tree = useMemo(() => buildTree(categories), [categories]);
@@ -60,8 +60,13 @@ export default function TicketsPage() {
     const done = tickets.filter(t => t.status === 'DONE').length;
     return { total, todo, inProgress, done };
   }, [tickets]);
-  const titleValid = newTicketTitle.trim().length >= 2;
-  const categoryValid = !!ticketCategoryId;
+  function clearFilters() {
+    setTicketQuery('');
+    setTicketStatus('ALL');
+    setTicketCategory('');
+    setTicketPriority('ALL');
+    setTicketAssignee('ALL');
+  }
 
   async function loadCategories() {
     const res = await fetch("/api/categories");
@@ -83,10 +88,9 @@ export default function TicketsPage() {
   // Preselect category from query param
   useEffect(() => {
     const cid = search?.get('categoryId');
-    if (cid) {
-      setTicketCategoryId((prev) => prev || cid);
-      setTicketCategory((prev) => prev || cid);
-    }
+    if (cid) setTicketCategory((prev) => prev || cid);
+    const openNew = search?.get('newTicket');
+    if (openNew && !showCreateModal) setShowCreateModal(true);
   }, [search]);
 
   const filteredTickets = useMemo(() => {
@@ -94,28 +98,13 @@ export default function TicketsPage() {
       const matchesQuery = ticketQuery.trim().length === 0 || t.title.toLowerCase().includes(ticketQuery.toLowerCase()) || (t.description || "").toLowerCase().includes(ticketQuery.toLowerCase());
       const matchesStatus = ticketStatus === 'ALL' || t.status === ticketStatus;
       const matchesCategory = !ticketCategory || t.categoryId === ticketCategory;
-      return matchesQuery && matchesStatus && matchesCategory;
+      const p = ((t as any).priority as 'LOW'|'MEDIUM'|'HIGH'|undefined) || 'MEDIUM';
+      const matchesPriority = ticketPriority === 'ALL' || p === ticketPriority;
+      const aid = ((t as any).assigneeId as string | undefined) || '';
+      const matchesAssignee = ticketAssignee === 'ALL' ? true : (ticketAssignee === 'UNASSIGNED' ? !aid : aid === ticketAssignee);
+      return matchesQuery && matchesStatus && matchesCategory && matchesPriority && matchesAssignee;
     });
-  }, [tickets, ticketQuery, ticketStatus, ticketCategory]);
-
-  async function createTicket() {
-    if (!titleValid || !categoryValid || creating) return;
-    setError(null);
-    setCreating(true);
-    try {
-      const res = await fetch("/api/tickets", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: newTicketTitle, description: newTicketDesc, categoryId: ticketCategoryId }) });
-      if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
-        setError(d?.error || 'Failed to create ticket');
-        return;
-      }
-      setNewTicketTitle(""); setNewTicketDesc(""); setTicketCategoryId("");
-      loadTickets();
-      setShowCreateModal(false);
-    } finally {
-      setCreating(false);
-    }
-  }
+  }, [tickets, ticketQuery, ticketStatus, ticketCategory, ticketPriority, ticketAssignee]);
 
   function StatusBadge({ status }: { status: Ticket['status'] }) {
     const cls = status === 'DONE' ? 'bg-success-100 text-success-700' : status === 'IN_PROGRESS' ? 'bg-warning-100 text-warning-700' : 'bg-secondary-100 text-secondary-700';
@@ -139,6 +128,7 @@ export default function TicketsPage() {
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-semibold">Tickets</h1>
           <div className="flex items-center gap-2 text-sm">
+          <button onClick={() => setShowCreateCategory(true)} className="inline-flex items-center gap-2 rounded-xl bg-primary-50 px-3 py-2 text-primary-700 ring-2 ring-primary-200 transition hover:bg-primary-100 focus:outline-none focus:ring-4 focus:ring-primary-300">New category</button>
             <button onClick={() => setShowCreateModal(true)} className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-white shadow-md shadow-primary-300 ring-2 ring-primary-200 transition hover:bg-primary-700 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-primary-300">
               <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 3a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H4a1 1 0 1 1 0-2h5V4a1 1 0 0 1 1-1z"/></svg>
               New ticket
@@ -169,55 +159,69 @@ export default function TicketsPage() {
       </section>
 
       {showCreateModal && (
-        <div className="fixed inset-0 z-50">
-          <div className="fixed inset-0 bg-black/40" onClick={() => setShowCreateModal(false)} />
-          <div className="relative mx-auto mt-24 w-full max-w-lg rounded-xl bg-white p-4 shadow-lg">
-            <div className="mb-2 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Create ticket</h3>
-              <button onClick={() => setShowCreateModal(false)} className="rounded px-2 py-1 text-secondary-700 hover:bg-secondary-100">✕</button>
-            </div>
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-              <div>
-                <input value={newTicketTitle} onChange={(e) => setNewTicketTitle(e.target.value)} className="w-full rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200" placeholder="Title (required)" />
-                <p className="mt-1 text-xs text-secondary-600">At least 2 characters.</p>
-              </div>
-              <div>
-                <select value={ticketCategoryId} onChange={(e) => setTicketCategoryId(e.target.value)} className="w-full rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200">
-                  <option value="">Select category/sub-category</option>
-                  {categoryOptions.map((o) => (<option key={o.id} value={o.id}>{o.label}</option>))}
-                </select>
-                <p className="mt-1 text-xs text-secondary-600">Pick where this ticket belongs.</p>
-              </div>
-              <div className="md:col-span-2">
-                <input value={newTicketDesc} onChange={(e) => setNewTicketDesc(e.target.value)} className="w-full rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200" placeholder="Description (optional)" />
-                <p className="mt-1 text-xs text-secondary-600">Optional: add more details for context.</p>
-              </div>
-            </div>
-            <div className="mt-3 flex items-center justify-end gap-2">
-              {error && <span className="text-danger-600 text-sm">{error}</span>}
-              <button onClick={() => { setNewTicketTitle(''); setNewTicketDesc(''); setTicketCategoryId(''); setError(null); }} className="rounded-lg px-3 py-2 text-sm text-secondary-800 hover:bg-secondary-100">Reset</button>
-              <button disabled={!titleValid || !categoryValid || creating} onClick={createTicket} className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-white transition focus:outline-none ${titleValid && categoryValid && !creating ? 'bg-primary-600 hover:bg-primary-700 shadow-md shadow-primary-300 ring-2 ring-primary-200 hover:shadow-lg focus:ring-4 focus:ring-primary-300' : 'bg-secondary-300 cursor-not-allowed'}`}>{creating ? 'Creating…' : 'Create ticket'}</button>
-            </div>
-          </div>
-        </div>
+        <CreateTicketModal
+          open={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          defaultCategoryId={search?.get('categoryId') || undefined}
+          onCreated={() => { loadTickets(); }}
+        />
+      )}
+      {showCreateCategory && (
+        <CreateCategoryModal
+          open={showCreateCategory}
+          onClose={() => setShowCreateCategory(false)}
+          defaultParentId={ticketCategory || undefined}
+          onCreated={() => { setShowCreateCategory(false); loadCategories(); }}
+        />
       )}
 
       <section className="rounded-xl bg-white p-4 shadow">
         <h2 className="mb-3 text-lg font-semibold">All tickets</h2>
-        <div className="mb-3 grid grid-cols-1 gap-2 md:grid-cols-3">
-          <input value={ticketQuery} onChange={e=>setTicketQuery(e.target.value)} placeholder="Search title or description" className="rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200" />
-          <select value={ticketStatus} onChange={e=>setTicketStatus(e.target.value as any)} className="rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200">
-            <option value="ALL">All status</option>
-            <option value="TODO">To-do</option>
-            <option value="IN_PROGRESS">In-progress</option>
-            <option value="DONE">Done</option>
-          </select>
-          <select value={ticketCategory} onChange={e=>setTicketCategory(e.target.value)} className="rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200">
-            <option value="">All categories</option>
-            {categoryOptions.map(o => (<option key={o.id} value={o.id}>{o.label}</option>))}
-          </select>
+        <div className="mb-3 rounded-lg border bg-secondary-50 p-3">
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-5">
+            <div>
+              <label className="text-xs text-secondary-600">Search</label>
+              <input value={ticketQuery} onChange={e=>setTicketQuery(e.target.value)} placeholder="Title or description" className="mt-1 w-full rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200" />
+            </div>
+            <div>
+              <label className="text-xs text-secondary-600">Status</label>
+              <select value={ticketStatus} onChange={e=>setTicketStatus(e.target.value as any)} className="mt-1 w-full rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200">
+                <option value="ALL">All</option>
+                <option value="TODO">To-do</option>
+                <option value="IN_PROGRESS">In-progress</option>
+                <option value="DONE">Done</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-secondary-600">Category</label>
+              <select value={ticketCategory} onChange={e=>setTicketCategory(e.target.value)} className="mt-1 w-full rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200">
+                <option value="">All</option>
+                {categoryOptions.map(o => (<option key={o.id} value={o.id}>{o.label}</option>))}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-secondary-600">Priority</label>
+              <select value={ticketPriority} onChange={e=>setTicketPriority(e.target.value as any)} className="mt-1 w-full rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200">
+                <option value="ALL">All</option>
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-secondary-600">Assignee</label>
+              <select value={ticketAssignee} onChange={e=>setTicketAssignee(e.target.value as any)} className="mt-1 w-full rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200">
+                <option value="ALL">All</option>
+                <option value="UNASSIGNED">Unassigned</option>
+                {users.map(u => (<option key={u.id} value={u.id}>{u.name || u.email}</option>))}
+              </select>
+            </div>
+          </div>
+          <div className="mt-2 flex items-center justify-between">
+            <div className="text-xs text-secondary-600">Showing {filteredTickets.length} of {tickets.length} tickets</div>
+            <button onClick={clearFilters} className="text-xs text-secondary-800 hover:underline">Clear filters</button>
+          </div>
         </div>
-        <div className="mb-2 text-xs text-secondary-600">Showing {filteredTickets.length} of {tickets.length} tickets</div>
         <div className="overflow-x-auto rounded-xl border">
           <table className="min-w-full text-sm">
             <thead>
@@ -227,6 +231,7 @@ export default function TicketsPage() {
                 <th className="p-2 font-medium">Assignee</th>
                 <th className="p-2 font-medium">Status</th>
                 <th className="p-2 font-medium">Category</th>
+                <th className="p-2 font-medium">Priority</th>
               </tr>
             </thead>
             <tbody>
@@ -251,6 +256,9 @@ export default function TicketsPage() {
                     </div>
                   </td>
                   <td className="p-2 whitespace-nowrap">{t.category?.name || ''}</td>
+                  <td className="p-2 whitespace-nowrap">
+                    {(() => { const p = ((t as any).priority as 'LOW'|'MEDIUM'|'HIGH'|undefined) || 'MEDIUM'; const cls = p==='HIGH'?'bg-danger-100 text-danger-700':p==='MEDIUM'?'bg-warning-100 text-warning-700':'bg-success-100 text-success-700'; const label = p.charAt(0)+p.slice(1).toLowerCase(); return (<span className={`inline-block rounded px-2 py-0.5 text-xs ${cls}`}>{label}</span>); })()}
+                  </td>
                 </tr>
               ))}
               {filteredTickets.length === 0 && (<tr><td colSpan={5} className="p-4 text-center text-secondary-600">No tickets match.</td></tr>)}

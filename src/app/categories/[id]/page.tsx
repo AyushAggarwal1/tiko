@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import CreateCategoryModal from '@/app/_components/CreateCategoryModal';
+import CreateTicketModal from '@/app/_components/CreateTicketModal';
 import { useParams, useRouter } from 'next/navigation';
 
 type Category = { id: string; name: string; description?: string | null; ticketsCount?: number };
@@ -11,6 +12,7 @@ type Ticket = {
   title: string;
   description?: string | null;
   status: 'TODO' | 'IN_PROGRESS' | 'DONE';
+  priority: 'LOW'|'MEDIUM'|'HIGH';
 };
 
 export default function CategoryDetailPage() {
@@ -22,7 +24,9 @@ export default function CategoryDetailPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<'ALL' | Ticket['status']>('ALL');
+  const [priority, setPriority] = useState<'ALL' | Ticket['priority']>('ALL');
   const [showCreateSub, setShowCreateSub] = useState(false);
+  const [showCreateTicket, setShowCreateTicket] = useState(false);
 
   const counts = useMemo(() => {
     const total = tickets.length;
@@ -50,7 +54,8 @@ export default function CategoryDetailPage() {
   const filtered = tickets.filter(t => {
     const matchesQuery = query.trim().length === 0 || t.title.toLowerCase().includes(query.toLowerCase()) || (t.description || "").toLowerCase().includes(query.toLowerCase());
     const matchesStatus = status === 'ALL' || t.status === status;
-    return matchesQuery && matchesStatus;
+    const matchesPriority = priority === 'ALL' || t.priority === priority;
+    return matchesQuery && matchesStatus && matchesPriority;
   });
 
   return (
@@ -64,7 +69,7 @@ export default function CategoryDetailPage() {
           </div>
           <div className="flex items-center gap-2 text-sm">
             <button onClick={() => setShowCreateSub(true)} className="rounded-lg bg-secondary-200 px-3 py-2 text-secondary-900 hover:bg-secondary-300">Create sub-category</button>
-            <a href={`/tickets?categoryId=${id}`} className="rounded-lg bg-primary-600 px-3 py-2 text-white hover:bg-primary-700">Create ticket</a>
+            <button onClick={() => setShowCreateTicket(true)} className="rounded-lg bg-primary-600 px-3 py-2 text-white hover:bg-primary-700">Create ticket</button>
           </div>
         </div>
       </section>
@@ -75,6 +80,9 @@ export default function CategoryDetailPage() {
         <>
           {showCreateSub && (
             <CreateCategoryModal open={showCreateSub} onClose={() => setShowCreateSub(false)} defaultParentId={id} onCreated={() => { setShowCreateSub(false); load(); }} />
+          )}
+          {showCreateTicket && (
+            <CreateTicketModal open={showCreateTicket} onClose={() => setShowCreateTicket(false)} defaultCategoryId={id} onCreated={() => { setShowCreateTicket(false); load(); }} />
           )}
           {/* Stats */}
           <section className="grid gap-4 md:grid-cols-4">
@@ -126,7 +134,12 @@ export default function CategoryDetailPage() {
                 <option value="IN_PROGRESS">In-progress</option>
                 <option value="DONE">Done</option>
               </select>
-              <div className="hidden md:block" />
+              <select value={priority} onChange={e=>setPriority(e.target.value as any)} className="rounded-lg border border-secondary-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-200">
+                <option value="ALL">All priority</option>
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+              </select>
             </div>
             <div className="overflow-x-auto rounded-xl border">
               <table className="min-w-full text-sm">
@@ -135,6 +148,7 @@ export default function CategoryDetailPage() {
                     <th className="p-2 font-medium">Title</th>
                     <th className="p-2 font-medium">Description</th>
                     <th className="p-2 font-medium">Status</th>
+                    <th className="p-2 font-medium">Priority</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -143,10 +157,11 @@ export default function CategoryDetailPage() {
                       <td className="p-2 font-medium whitespace-nowrap"><a className="text-primary-600 hover:underline" href={`/tickets/${t.id}`}>{t.title}</a></td>
                       <td className="p-2 max-w-[24rem] truncate">{t.description || ''}</td>
                       <td className="p-2"><StatusBadge status={t.status} /></td>
+                      <td className="p-2 whitespace-nowrap"><span className={`inline-block rounded px-2 py-0.5 text-xs ${t.priority==='HIGH'?'bg-danger-100 text-danger-700':t.priority==='MEDIUM'?'bg-warning-100 text-warning-700':'bg-success-100 text-success-700'}`}>{t.priority.charAt(0)+t.priority.slice(1).toLowerCase()}</span></td>
                     </tr>
                   ))}
                   {filtered.length === 0 && (
-                    <tr><td colSpan={3} className="p-4 text-center text-secondary-600">No tickets match.</td></tr>
+                    <tr><td colSpan={4} className="p-4 text-center text-secondary-600">No tickets match.</td></tr>
                   )}
                 </tbody>
               </table>
