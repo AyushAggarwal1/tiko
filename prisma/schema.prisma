@@ -97,6 +97,7 @@ model User {
   assigned     Ticket[]
   history      TicketHistory[]
   invitationsSent Invitation[] @relation("InvitedBy")
+  comments     Comment[]
 }
 
 model TicketHistory {
